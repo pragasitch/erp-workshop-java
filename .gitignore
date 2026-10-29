@@ -5,6 +5,7 @@ node_modules/
 # build output
 dist/
 .dev/
+target/
 *.tsbuildinfo
 **/src/generated/
 
@@ -15,6 +16,9 @@ dist/
 .env
 .env.*
 !.env.example
+
+# corporate TLS root certs (Zscaler etc.) — each machine supplies its own, not committed
+docker/certs/*.crt
 
 # logs
 *.log

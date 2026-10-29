@@ -18,15 +18,26 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm format:check
 
+      # Web, contracts and the shared packages.
       - run: pnpm turbo run lint typecheck test build
 
+      # The Spring Boot API: compile, unit tests, package.
+      - name: Build and test the Java API
+        run: mvn -q -B -f apps/api/pom.xml verify
+
   # The Demo: lines, run by a machine. Playwright drives the built web app against the
-  # built API and a real Postgres, on every pull request. Unlike the AI review this job
-  # is a check: red blocks the merge. See lessons/10 and apps/e2e.
+  # Spring Boot API and a real Postgres, on every pull request. Unlike the AI review this
+  # job is a check: red blocks the merge. See lessons/10 and apps/e2e.
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -44,6 +55,12 @@ jobs:
           --health-interval 2s
           --health-timeout 5s
           --health-retries 30
+    # Spring reads these; Flyway migrates and the seeder creates the demo users when
+    # Playwright starts the API, so there is no separate migrate/seed step.
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/erp
+      SPRING_DATASOURCE_USERNAME: erp
+      SPRING_DATASOURCE_PASSWORD: erp
     steps:
       - uses: actions/checkout@v5
 
@@ -53,6 +70,12 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
 
       - run: pnpm install --frozen-lockfile
 
@@ -78,13 +101,8 @@ jobs:
         if: steps.browsers.outputs.cache-hit == 'true'
         run: pnpm --filter @erp/e2e exec playwright install-deps chromium
 
-      # DATABASE_URL defaults to the service above (postgresql://erp:erp@localhost:5432/erp).
-      # Prisma 7 does not generate the client on install, and the seed imports it, so
-      # generate sits between the migrations and the seed.
-      - name: Migrate, generate and seed
-        run: pnpm db:deploy && pnpm db:generate && pnpm db:seed
-
-      # Builds the API and the web app, then Playwright starts both and runs apps/e2e/tests.
+      # Builds the web app and the API, then Playwright starts both (the API migrates and
+      # seeds on boot) and runs apps/e2e/tests.
       - run: pnpm e2e
 
       - name: Upload the report and traces

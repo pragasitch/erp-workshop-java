@@ -158,7 +158,7 @@ The agent reads the TOR, explores the codebase, and comes back with a numbered *
 
 You saw the skill from the inside in lesson 2's notes on progressive disclosure. From the outside, three things make it work:
 
-- **Facts are the agent's job, decisions are yours.** If it asks you how many models are in the Prisma schema, push back: it can look. If it asks whether Thai screens are in scope, that is a decision, and it is waiting for you.
+- **Facts are the agent's job, decisions are yours.** If it asks you how many entities are in the JPA model, push back: it can look. If it asks whether Thai screens are in scope, that is a decision, and it is waiting for you.
 - **The recommendation is a proposal, not an answer.** Disagree where the class disagrees. The point of doing this in a room is that the answers are shared.
 - **It writes nothing.** The output of a grill is a conversation in which every decision has been made out loud. That is deliberate: the next skill turns the conversation into the document.
 
@@ -178,10 +178,10 @@ No interview this time. The skill synthesises the grill into a spec: problem sta
 
 The answer for this repository is the three seams the `write-tests` skill already describes, plus one new one:
 
-- Contract schema tests in `packages/contracts`.
-- Controller specs in `apps/api` that call the oRPC handlers through `call()` with a stubbed `PrismaService`.
+- The generated-contract check in `packages/contracts` (the client still builds against the committed OpenAPI spec).
+- Controller tests in `apps/api` with JUnit + MockMvc and a mocked repository.
 - React component tests in `apps/web` with a `QueryClient` and a stubbed `fetch`.
-- **New:** integration tests against the Docker Postgres for the posting paths. Idempotent receipts (GR-04), concurrent receipts (GR-05), the "never negative" rule (INV-03) and two sales racing for the same stock (INV-04, AC-07) cannot be proven with a stubbed database.
+- **New:** integration tests against the Docker Postgres for the posting paths. Idempotent receipts (GR-04), concurrent receipts (GR-05), the "never negative" rule (INV-03) and two sales racing for the same stock (INV-04, AC-07) cannot be proven with a mocked repository.
 
 Say yes to that, and it publishes. Because the tracker is GitHub, the spec lands as **one issue**, labelled `ready-for-agent`, not as a markdown file. The flow diagram above says "a markdown file" because that is what the skill writes when the tracker is local files. Here, the issue is the file. Its number is the input to the next step, so note it:
 
@@ -260,11 +260,11 @@ Blocking edges are native GitHub dependencies, set when the issue is created, an
 
 ### What a good ticket looks like
 
-![Two issue cards side by side. Left, marked not a ticket: Products, Prisma model and migration. Only the schema layer is filled in the strip above it, its criteria Migration runs and Products page loads are flagged as passing today, and it has no Covers line and no TOR IDs. Right, marked a ticket: number 15, create and edit a product with SKU uniqueness enforced, parent number 12, covers MD-01 and MD-02, labelled ready-for-agent, every layer filled, criteria that fail against today's code and cite TOR IDs, blocked by number 14 stores and suppliers. Below, three checks: vertical, traceable, each criterion can fail today.](images/good-ticket.svg)
+![Two issue cards side by side. Left, marked not a ticket: Products, JPA entity and migration. Only the schema layer is filled in the strip above it, its criteria Migration runs and Products page loads are flagged as passing today, and it has no Covers line and no TOR IDs. Right, marked a ticket: number 15, create and edit a product with SKU uniqueness enforced, parent number 12, covers MD-01 and MD-02, labelled ready-for-agent, every layer filled, criteria that fail against today's code and cite TOR IDs, blocked by number 14 stores and suppliers. Below, three checks: vertical, traceable, each criterion can fail today.](images/good-ticket.svg)
 
-Every ticket is a **tracer bullet**: a narrow but complete path through schema, API, UI and tests, demoable on its own, sized for one fresh context window. Three checks for each one:
+Every ticket is a **tracer bullet**: a narrow but complete path through entity, API, UI and tests, demoable on its own, sized for one fresh context window. Three checks for each one:
 
-- **Vertical, not horizontal.** "Products: Prisma model and migration" is a layer, not a ticket. "Create and edit a product, with SKU uniqueness enforced" is a ticket. The test is the `Demo:` line: if you can't say what you would show when it closes, it is a layer. Ask for it to be merged with the layers above and below it.
+- **Vertical, not horizontal.** "Products: JPA entity and migration" is a layer, not a ticket. "Create and edit a product, with SKU uniqueness enforced" is a ticket. The test is the `Demo:` line: if you can't say what you would show when it closes, it is a layer. Ask for it to be merged with the layers above and below it.
 - **Traceable.** The `Covers:` line names the TOR requirement IDs the ticket implements, and the criteria cite the AC-xx scenario where one exists. The TOR's section 7.2 demands traceability from every requirement to delivered functionality, and this is the cheapest moment to get it.
 - **Each criterion can fail today.** The skill's own documentation warns that acceptance criteria sometimes pass before any work is done. "The products page loads" passes now. "A second product with SKU001 is rejected with a message naming the SKU" does not. For each criterion, name the observation that would show it false.
 

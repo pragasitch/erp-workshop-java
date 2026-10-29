@@ -1,14 +1,12 @@
 # Local development stack. Usage:
 #   docker compose up            # postgres + api + web
-#   docker compose --profile tools up studio   # Prisma Studio on http://localhost:5555
 #
 # Every value below has a default; override any of them in a .env file (see .env.example).
 
 name: erp-workshop
 
-x-node-env: &node-env
-  DATABASE_URL: postgresql://${POSTGRES_USER:-erp}:${POSTGRES_PASSWORD:-erp}@postgres:5432/${POSTGRES_DB:-erp}
-  # File watching through bind mounts is unreliable on some hosts (e.g. Windows): poll instead.
+x-node-env:
+  &node-env # File watching through bind mounts is unreliable on some hosts (e.g. Windows): poll instead.
   WATCH_POLLING: 'true'
   CHOKIDAR_USEPOLLING: 'true'
   TSC_WATCHFILE: DynamicPriorityPolling
@@ -23,6 +21,7 @@ x-node-app: &node-app
   volumes:
     - .:/workspace
     - pnpm-store:/pnpm/store
+    - m2:/m2/repository
   environment:
     <<: *node-env
 
@@ -50,23 +49,24 @@ services:
 
   api:
     <<: *node-app
-    # Apply pending migrations, (re)create the demo users, then run NestJS + watchers for the shared packages it uses.
-    command: sh -c "pnpm db:deploy && pnpm db:seed && pnpm turbo run dev --filter=@erp/api... --ui=stream"
+    # Build the Spring Boot API, then run it. Flyway migrates and the seeder creates
+    # the demo users on startup, so no separate migrate/seed step is needed.
+    command: sh -c "mvn -q -B -f apps/api/pom.xml spring-boot:run"
     ports:
       - '${API_PORT:-3000}:3000'
     environment:
       <<: *node-env
       PORT: '3000'
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-erp}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-erp}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-erp}
     depends_on:
-      install:
-        condition: service_completed_successfully
       postgres:
         condition: service_healthy
 
   web:
     <<: *node-app
-    # --only: the api service already runs the watchers for the shared packages.
-    command: pnpm turbo run dev --filter=@erp/web --only --ui=stream
+    command: pnpm turbo run dev --filter=@erp/web --ui=stream
     ports:
       - '${WEB_PORT:-5173}:5173'
     environment:
@@ -77,16 +77,7 @@ services:
       install:
         condition: service_completed_successfully
 
-  studio:
-    <<: *node-app
-    profiles: [tools]
-    command: sh -c "node docker/studio-proxy.mjs & pnpm --filter @erp/database exec prisma studio --port 5556 --browser none"
-    ports:
-      - '5555:5555'
-    depends_on:
-      postgres:
-        condition: service_healthy
-
 volumes:
   postgres-data:
   pnpm-store:
+  m2:

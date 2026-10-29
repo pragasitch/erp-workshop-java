@@ -1,5 +1,4 @@
-import type { User } from '@erp/contracts';
-import { ORPCError } from '@orpc/client';
+import { ApiError, type User } from '@erp/contracts';
 import { hashKey, type QueryClient, useQuery } from '@tanstack/react-query';
 import { orpc } from '@/lib/orpc';
 
@@ -14,7 +13,7 @@ export function useCurrentUser(): User | null {
 }
 
 export function isUnauthorized(error: unknown): boolean {
-  return error instanceof ORPCError && error.status === 401;
+  return error instanceof ApiError && error.status === 401;
 }
 
 /** Forget the user and all their cached data. `RequireAuth` then redirects to /login. */

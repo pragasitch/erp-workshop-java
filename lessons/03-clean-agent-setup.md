@@ -101,7 +101,7 @@ After step 1 your laptop is clean, but that lasts only until you restore your se
 - the skills in `.agents/skills/`
 - the built-in tools for reading, editing and searching files, running commands, delegating to subagents, and searching the web for docs
 
-**What goes off:** MCP servers, plugins, extensions and powers, hooks, apps and connectors, computer use, image generation, custom output styles, knowledge bases, and memory. None of these is needed to build a NestJS and React app, and each one adds tools or instructions from outside the repository. Off is not forever: lesson 5 switches one hook back on, chosen by the project and committed with it.
+**What goes off:** MCP servers, plugins, extensions and powers, hooks, apps and connectors, computer use, image generation, custom output styles, knowledge bases, and memory. None of these is needed to build a Spring Boot and React app, and each one adds tools or instructions from outside the repository. Off is not forever: lesson 5 switches one hook back on, chosen by the project and committed with it..
 
 Each tool names its project file differently and has different switches. Rather than hand-write three files, we gave each tool the same prompt:
 

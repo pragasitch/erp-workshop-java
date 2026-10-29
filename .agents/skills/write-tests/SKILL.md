@@ -1,66 +1,70 @@
 ---
 name: write-tests
-description: How tests are written and run in this repo - NestJS controller specs with a stubbed PrismaService and oRPC call(), React component tests with a QueryClient and a stubbed fetch, Zod schema tests. Use when adding or fixing tests.
+description: How tests are written and run in this repo - Spring Boot API tests with JUnit 5 and MockMvc, React component tests with a QueryClient and a stubbed fetch, and the generated-contract check. Use when adding or fixing tests.
 ---
 
 # Write tests
 
-Everything runs on Vitest. Tests are colocated with the code they cover.
+The API is tested with JUnit 5; the web and shared packages with Vitest. Tests
+are colocated with the code they cover (Java under `src/test/java`).
 
-| Package              | File name     | Run only this package                     |
-| -------------------- | ------------- | ----------------------------------------- |
-| `apps/api`           | `*.spec.ts`   | `pnpm turbo run test --filter=@erp/api`   |
-| `apps/web`           | `*.test.tsx`  | `pnpm turbo run test --filter=@erp/web`   |
-| `packages/contracts` | `*.test.ts`   | `pnpm turbo run test --filter=@erp/contracts` |
+| Package              | Framework      | Run only this                               |
+| -------------------- | -------------- | ------------------------------------------- |
+| `apps/api`      | JUnit 5 + MockMvc | `mvn -q -B -f apps/api/pom.xml test` |
+| `apps/web`           | Vitest `*.test.tsx` | `pnpm turbo run test --filter=@erp/web` |
+| `packages/contracts` | Vitest `*.test.ts`  | `pnpm turbo run test --filter=@erp/contracts` |
 
-`pnpm test` runs all of them. Inside Docker prefix with `docker compose exec api`. Browser tests are not here: they live in `apps/e2e` and have their own skill, `write-e2e`.
+Browser tests are not here: they live in `apps/e2e` with their own skill,
+`write-e2e`.
 
-## API controller spec
+## API test (JUnit + MockMvc)
 
-Build the controller with Nest's testing module, replace `PrismaService` with a stub, and invoke the handler with `call()` from `@orpc/server`. Reference: `apps/api/src/health/health.controller.spec.ts`.
+Use `@SpringBootTest` + `@AutoConfigureMockMvc`, mock the repository with
+`@MockBean`, and drive the controller through `MockMvc`. `@WithMockUser` supplies
+an authenticated principal so the security filter lets the request through.
 
-```ts
-import { Test } from '@nestjs/testing';
-import { call } from '@orpc/server';
-import { describe, expect, it, vi } from 'vitest';
-import { PrismaService } from '../database/prisma.service.js';
-import { CustomersController } from './customers.controller.js';
+```java
+@SpringBootTest
+@AutoConfigureMockMvc
+class CustomerControllerTest {
 
-async function createController(prisma: Record<string, unknown>) {
-  const moduleRef = await Test.createTestingModule({
-    controllers: [CustomersController],
-    providers: [{ provide: PrismaService, useValue: prisma }],
-  }).compile();
-  return moduleRef.get(CustomersController);
+  @Autowired MockMvc mvc;
+  @MockBean CustomerRepository customers;
+
+  @Test
+  @WithMockUser
+  void listsCustomers() throws Exception {
+    when(customers.findAll()).thenReturn(List.of(new Customer("1", "ACME")));
+
+    mvc.perform(get("/api/customers"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].name").value("ACME"));
+  }
+
+  @Test
+  @WithMockUser
+  void rejectsBlankName() throws Exception {
+    mvc.perform(post("/api/customers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"\"}"))
+        .andExpect(status().isBadRequest());
+  }
 }
-
-describe('CustomersController', () => {
-  it('lists customers', async () => {
-    const customers = [{ id: '1', name: 'ACME' }];
-    const controller = await createController({
-      customer: { findMany: vi.fn().mockResolvedValue(customers) },
-    });
-
-    await expect(call(controller.list(), undefined)).resolves.toEqual(customers);
-  });
-
-  it('creates a customer', async () => {
-    const create = vi.fn().mockResolvedValue({ id: '1', name: 'ACME' });
-    const controller = await createController({ customer: { create } });
-
-    await expect(call(controller.create(), { name: 'ACME' })).resolves.toMatchObject({ id: '1' });
-    expect(create).toHaveBeenCalledWith({ data: { name: 'ACME' } });
-  });
-});
 ```
 
-- `call()` runs the contract's input/output validation, so invalid input rejects just like a real request.
-- `AuthGuard` doesn't run in controller specs. Pass the user straight into the method: `call(controller.create(user), input)` with `const user: User = { id: 'u1', email: 'admin@erp.local', name: 'Admin', role: 'ADMIN' }`. Guard behaviour (`@Public`, `@Roles`) is covered in `src/auth/auth.guard.spec.ts`.
-- Stub only the Prisma methods the handler uses. Don't hit a real database.
+- Paths include the `/api` context path (`get("/api/customers")`).
+- Mock only the repository methods the handler uses; don't hit a real database.
+- Role rules: `@WithMockUser(roles = "ADMIN")` for an admin route; a `@WithMockUser`
+  with the wrong role should get 403. An unauthenticated request should get 401.
+- For a DB-backed test (migrations and real SQL), use `@Testcontainers` with a
+  Postgres container instead of mocking the repository.
 
 ## Web component test
 
-Render inside a `QueryClientProvider` built with `createQueryClient()` from `@/lib/query-client`, and stub `fetch` for the API responses. The oRPC client looks up `globalThis.fetch` on every call, so `vi.stubGlobal` works. Reference: `apps/web/src/components/health-status.test.tsx`.
+Render inside a `QueryClientProvider` built with `createQueryClient()` from
+`@/lib/query-client`, and stub `fetch` for the API responses. The generated
+client looks up `globalThis.fetch` on every call, so `vi.stubGlobal` works.
+Reference: `apps/web/src/components/health-status.test.tsx`.
 
 ```tsx
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -92,9 +96,22 @@ describe('CustomerList', () => {
 
 - Use `findBy*` (async) for anything that appears after the query resolves.
 - jsdom and `@testing-library/jest-dom` matchers are set up in `apps/web/src/test/setup.ts`.
-- For several endpoints use `mockApi` from `@/test/mock-api`: `mockApi({ 'GET /customers': [...], 'POST /customers': unauthorized() })`. Keys are `'<METHOD> <path without /api>'`; unmocked routes answer 404.
-- Components that read the user (`useCurrentUser`) need `'GET /auth/me': { user }` in the mock. For pages with links or redirects, render through `createMemoryRouter` + `RouterProvider`. References: `apps/web/src/routes/login.test.tsx`, `apps/web/src/components/require-auth.test.tsx`.
+- For several endpoints use `mockApi` from `@/test/mock-api`:
+  `mockApi({ 'GET /customers': [...], 'POST /customers': unauthorized() })`. Keys
+  are `'<METHOD> <path without /api>'`; unmocked routes answer 404.
+- Components that read the user (`useCurrentUser`) need `'GET /auth/me': { user }`
+  in the mock. For pages with links or redirects, render through
+  `createMemoryRouter` + `RouterProvider`. References:
+  `apps/web/src/routes/login.test.tsx`, `apps/web/src/components/require-auth.test.tsx`.
 
-## Contract schema test
+## Contract check
 
-Call `Schema.safeParse(...)` with a valid and an invalid payload and assert `result.success`. Reference: `packages/contracts/src/health.test.ts`.
+The contract is generated, not hand-written, so the "test" is that the generated
+client still builds against the committed spec:
+
+```bash
+pnpm --filter @erp/contracts build     # runs generate, then type-checks and bundles
+```
+
+If a DTO changed, regenerate the spec first (see the `add-feature` skill), or the
+generated client and the API drift apart.

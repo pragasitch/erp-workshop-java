@@ -1,7 +1,0 @@
-{
-  "extends": "@erp/typescript-config/nestjs.json",
-  "compilerOptions": {
-    "outDir": "dist"
-  },
-  "include": ["src", "*.config.ts"]
-}

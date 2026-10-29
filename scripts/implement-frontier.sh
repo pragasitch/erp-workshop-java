@@ -47,8 +47,14 @@ done
 cd "$(git rev-parse --show-toplevel)"
 mkdir -p .ai-runs
 
+# The Java API reads these; the flyway:clean reset below needs them too. Default
+# to the compose Postgres on localhost, overridable from the environment.
+export SPRING_DATASOURCE_URL="${SPRING_DATASOURCE_URL:-jdbc:postgresql://localhost:5432/erp}"
+export SPRING_DATASOURCE_USERNAME="${SPRING_DATASOURCE_USERNAME:-erp}"
+export SPRING_DATASOURCE_PASSWORD="${SPRING_DATASOURCE_PASSWORD:-erp}"
+
 # --- Preflight: everything the loop assumes, checked before the first ticket.
-for cmd in gh kiro-cli pnpm node docker jq; do
+for cmd in gh kiro-cli pnpm node docker jq mvn java; do
   command -v "$cmd" >/dev/null 2>&1 || fail "$cmd is not installed"
 done
 gh auth status >/dev/null 2>&1 || fail "gh is not logged in"
@@ -138,8 +144,9 @@ for n in $frontier; do
   fi
 
   # The reset the guard refuses to the agent. Each ticket branches from main,
-  # so the database must not carry the previous ticket's migration.
-  pnpm --filter @erp/database exec prisma migrate reset --force >"$log" 2>&1 ||
+  # so the database must not carry the previous ticket's migration. Flyway clean
+  # drops everything; the API re-migrates and re-seeds when it next boots.
+  mvn -q -B -f apps/api-java/pom.xml flyway:clean >"$log" 2>&1 ||
     fail "database reset failed for #$n; see $log"
   : >"$events"
 

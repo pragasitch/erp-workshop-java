@@ -1,0 +1,25 @@
+server:
+  port: ${PORT:3000}
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: erp-api
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/erp}
+    username: ${SPRING_DATASOURCE_USERNAME:${POSTGRES_USER:erp}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${POSTGRES_PASSWORD:erp}}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+springdoc:
+  api-docs:
+    path: /openapi
+  swagger-ui:
+    path: /docs

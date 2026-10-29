@@ -26,7 +26,7 @@ pnpm --filter @erp/e2e exec playwright show-report        # the last HTML report
 
 Playwright runs on your machine, not in the containers. Once per machine: `pnpm --filter @erp/e2e exec playwright install chromium`. Never add `--with-deps`: the guard refuses it, because it installs system packages with sudo. If Chromium is missing and you cannot install it, say so in the PR body and let CI run the suite.
 
-With `docker compose up` running, the suite reuses the `api` and `web` containers. With only Postgres running, `pnpm e2e` builds the API and the web app and Playwright starts both (`node dist/main.js` and `vite preview`). The ports are `API_PORT` and `WEB_PORT` from the repo-root `.env`, default 3000 and 5173, the same as `compose.yaml`. In CI it is always the second form, against a fresh seeded database, and the `e2e` check turns red when a test fails. Red means the `Demo:` line fails; it is never retried.
+With `docker compose up` running, the suite reuses the `api` and `web` containers. With only Postgres running, `pnpm e2e` builds the web app and Playwright starts both the Spring Boot API (`mvn -f apps/api/pom.xml spring-boot:run`, which migrates and seeds on boot) and `vite preview`. The ports are `API_PORT` and `WEB_PORT` from the repo-root `.env`, default 3000 and 5173, the same as `compose.yaml`. In CI it is always the second form, against a fresh seeded database, and the `e2e` check turns red when a test fails. Red means the `Demo:` line fails; it is never retried.
 
 ## The shape of a test
 
@@ -72,7 +72,7 @@ Only the accessible ones: `getByRole`, `getByLabel`, `getByText`, `getByPlacehol
 ## Data
 
 - Every test creates the rows it needs, through the UI or the API (`request.post('/api/...')`), with a unique suffix in any unique field: `Date.now()` or `test.info().testId`.
-- Never truncate a table, never run `db:reset`, never depend on rows another test created. Tests run in any order and in parallel against one database.
+- Never truncate a table, never reset the database, never depend on rows another test created. Tests run in any order and in parallel against one database.
 - The only rows a test may assume exist are the two seeded users in `accounts.ts`.
 
 ## Flakes

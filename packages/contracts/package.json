@@ -14,21 +14,23 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "generate": "orval --config ./orval.config.ts",
+    "build": "pnpm generate && tsup",
+    "dev": "pnpm generate && tsup --watch",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run --passWithNoTests"
   },
-  "dependencies": {
-    "@orpc/contract": "~1.15.7",
-    "zod": "^4.6.7"
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.0.0"
   },
   "devDependencies": {
     "@erp/eslint-config": "workspace:*",
     "@erp/typescript-config": "workspace:*",
+    "@tanstack/react-query": "^5.104.5",
     "@types/node": "^24.0.0",
     "eslint": "^10.13.0",
+    "orval": "^7.21.0",
     "tsup": "^9.0.0",
     "typescript": "~6.0.3",
     "vitest": "^5.0.5"

@@ -6,8 +6,9 @@
     "NODE_ENV",
     "PORT",
     "HOST",
-    "DATABASE_URL",
-    "AUTH_SECRET",
+    "SPRING_DATASOURCE_URL",
+    "SPRING_DATASOURCE_USERNAME",
+    "SPRING_DATASOURCE_PASSWORD",
     "API_PROXY_TARGET",
     "WATCH_POLLING",
     "CHOKIDAR_USEPOLLING",
@@ -15,29 +16,26 @@
     "TSC_WATCHDIRECTORY"
   ],
   "tasks": {
-    "db:generate": {
-      "cache": false
-    },
     "build": {
-      "dependsOn": ["^build", "db:generate"],
-      "outputs": ["dist/**"]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "target/**"]
     },
     "dev": {
-      "dependsOn": ["^build", "db:generate"],
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["^build", "db:generate"]
+      "dependsOn": ["^build"]
     },
     "typecheck": {
-      "dependsOn": ["^build", "db:generate"]
+      "dependsOn": ["^build"]
     },
     "test": {
-      "dependsOn": ["^build", "db:generate"]
+      "dependsOn": ["^build"]
     },
     "e2e": {
-      "dependsOn": ["@erp/api#build", "@erp/web#build"],
+      "dependsOn": ["@erp/web#build"],
       "passThroughEnv": [
         "CI",
         "GITHUB_ACTIONS",

@@ -1,0 +1,92 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "ERP Workshop API", "version": "0.0.0" },
+  "servers": [{ "url": "http://localhost:3000/api", "description": "Generated server url" }],
+  "paths": {
+    "/auth/logout": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Sign out",
+        "operationId": "logout",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Sign in with email and password",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/LoginRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/UserDto" } } }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": ["health"],
+        "summary": "Check that the API and the database are reachable",
+        "operationId": "check",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/HealthCheck" } } }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": ["auth"],
+        "summary": "The signed-in user, or null",
+        "operationId": "me",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/SessionResponse" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "required": ["email", "password"],
+        "type": "object",
+        "properties": { "email": { "type": "string" }, "password": { "type": "string" } }
+      },
+      "UserDto": {
+        "required": ["email", "id", "name", "role"],
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "email": { "type": "string" },
+          "name": { "type": "string" },
+          "role": { "type": "string", "enum": ["ADMIN", "STAFF"] }
+        }
+      },
+      "HealthCheck": {
+        "required": ["api", "database", "timestamp"],
+        "type": "object",
+        "properties": {
+          "api": { "type": "string" },
+          "database": { "type": "string" },
+          "timestamp": { "type": "string" }
+        }
+      },
+      "SessionResponse": {
+        "type": "object",
+        "properties": { "user": { "$ref": "#/components/schemas/UserDto" } }
+      }
+    }
+  }
+}

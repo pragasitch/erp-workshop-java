@@ -27,7 +27,7 @@ A monolith is one application deployed as one unit. A monorepo is only about whe
 
 ### What this repository looks like
 
-![Repository structure: apps contains the React web app and NestJS API; packages contains contracts, database, TypeScript configuration, and ESLint configuration; root files configure pnpm workspaces and Turborepo.](images/repository-structure.svg)
+![Repository structure: apps contains the React web app and the Spring Boot API; packages contains contracts, TypeScript configuration, and ESLint configuration; root files configure pnpm workspaces and Turborepo.](images/repository-structure.svg)
 
 Two pieces of plain configuration turn this folder into a monorepo.
 
@@ -88,31 +88,31 @@ You describe how tasks relate in `turbo.json`. This is the core of ours:
 {
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "db:generate"],
-      "outputs": ["dist/**"]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "target/**"]
     },
     "test": {
-      "dependsOn": ["^build", "db:generate"]
+      "dependsOn": ["^build"]
     }
   }
 }
 ```
 
-`"^build"` means: before running this task in a package, run `build` in every package it depends on. The `^` stands for "my dependencies". `"db:generate"` without a `^` means: first run `db:generate` in the same package, if it has that script. Only `@erp/database` has it, and it generates the Prisma client.
+`"^build"` means: before running this task in a package, run `build` in every package it depends on. The `^` stands for "my dependencies". So before `web` builds, `contracts` builds first, and `@erp/contracts` regenerates its TypeScript client from the committed OpenAPI spec as part of that build.
 
 From these rules and the package graph above, Turborepo works out the order. It runs independent tasks in parallel:
 
-![Task graph: database generation precedes database build; API build waits for both database and contracts; web build waits only for contracts. Independent tasks can run in parallel.](images/turborepo-task-graph.svg)
+![Task graph: the web build and the contracts build; the API build is a separate Maven project; web build waits for contracts. Independent tasks can run in parallel.](images/turborepo-task-graph.svg)
 
-`contracts` and `database` build at the same time, and `web` starts as soon as `contracts` is done. You never write this order by hand. Add a new package with the right dependencies, and it slots into the graph.
+`contracts` builds and the web app starts as soon as `contracts` is done. You never write this order by hand. Add a new package with the right dependencies, and it slots into the graph.
 
 ### 2.2 Caching
 
-![Caching flow: task inputs produce a hash. A cache miss executes the task and saves outputs and logs; a hit restores them. Editing only web rebuilds web while other builds are reused. Database generation always runs.](images/turborepo-caching.svg)
+![Caching flow: task inputs produce a hash. A cache miss executes the task and saves outputs and logs; a hit restores them. Editing only web rebuilds web while other builds are reused.](images/turborepo-caching.svg)
 
 Before running a task, Turborepo computes a hash of everything that affects it: the package's files, its dependencies' hashes, the task configuration, and the relevant environment. If it has seen that hash before, it doesn't run the task. It restores the saved output (`dist/**`) and replays the logs.
 
-On this repo, a second `pnpm turbo run build` with no changes reports `Cached: 4 cached, 5 total` and finishes in under half a second. The one task that runs every time is `db:generate`, which is marked `"cache": false` on purpose.
+On this repo, a second `pnpm turbo run build` with no changes reports most tasks as cached and finishes in under a second. The `@erp/contracts` build regenerates its client from the committed OpenAPI spec before bundling, so a spec change busts its cache and everything downstream of it.
 
 Change one file in `apps/web` and only `web`'s tasks run again. Everything else comes from the cache. The cache can also be shared between machines and CI (remote caching), but we don't need that for the workshop.
 
@@ -121,12 +121,12 @@ Change one file in `apps/web` and only `web`'s tasks run again. Everything else 
 `--filter` limits a command to the packages you care about:
 
 ```bash
-pnpm turbo run test --filter=@erp/api
+pnpm turbo run test --filter=@erp/web
 ```
 
-![Filtered API test run: database generation and the database and contracts builds prepare the API tests. Web, contracts and database tests are outside this run.](images/turborepo-filtered-run.svg)
+![Filtered web test run: the contracts build prepares the web tests. Other tests are outside this run.](images/turborepo-filtered-run.svg)
 
-Turborepo still builds whatever `@erp/api` depends on first, so the result is correct, not just fast.
+Turborepo still builds whatever `@erp/web` depends on first, so the result is correct, not just fast.
 
 ### Why Turborepo and not something else?
 
@@ -134,7 +134,7 @@ Turborepo still builds whatever `@erp/api` depends on first, so the result is co
 
 We chose Turborepo because it is a **thin layer**:
 
-- Every package keeps its normal `package.json` scripts. `vite build`, `nest build` and `prisma generate` run exactly as their docs describe.
+- Every package keeps its normal scripts. `vite build` and `prettier` run exactly as their docs describe, and the Java API builds with `mvn package`.
 - All the monorepo-specific configuration is one file of about 40 lines.
 - If you removed Turborepo tomorrow, every package would still build on its own.
 
@@ -152,9 +152,9 @@ An AI coding agent works in a loop: read the code, make a change, run something 
 
 To build a real feature, an agent needs to know the database model, the API shape, the handler and the screen that calls it. In a polyrepo, half of that is in another repository the agent can't see, so it guesses. Here, one checkout contains:
 
-- `packages/database/prisma/schema.prisma`: the data model
-- `packages/contracts/src/`: the exact API shape
-- `apps/api/src/`: the handlers
+- `apps/api/src/main/resources/db/migration/`: the data model, as Flyway migrations
+- `packages/contracts/openapi.json`: the exact API shape
+- `apps/api/src/main/java/`: the controllers and entities
 - `apps/web/src/`: the UI
 
 The agent reads the real contract instead of guessing at it.
@@ -195,13 +195,13 @@ An agent needs one reliable answer to "did I break anything?". Here that is:
 pnpm check   # lint + typecheck + test + build, in every package
 ```
 
-Turborepo keeps this loop cheap. Packages the agent didn't touch come from the cache, so the agent can run the full check after every slice without waiting for everything to rebuild. For a quicker inner loop it can scope the run with `--filter=@erp/api`.
+Turborepo keeps this loop cheap. Packages the agent didn't touch come from the cache, so the agent can run the full check after every slice without waiting for everything to rebuild. For a quicker inner loop it can scope the run with `--filter=@erp/web`.
 
 There is also a subtle correctness benefit. The apps import the **built** output of the shared packages. If an agent edits the contract and then runs `tsc` directly inside `apps/web`, it type-checks against the old build and gets confusing results. Running through Turborepo (`pnpm check`, `pnpm turbo run typecheck`) rebuilds the dependencies first, because of `^build`.
 
 ### 3.5 Instructions in layers: shared rules plus per-stack rules
 
-Agents read instruction files: `AGENTS.md`, plus tool-specific files like `CLAUDE.md` or Kiro steering files. In this repo the web app and the API use different stacks, so one flat file would mix React advice with NestJS advice. Instead the instructions are layered:
+Agents read instruction files: `AGENTS.md`, plus tool-specific files like `CLAUDE.md` or Kiro steering files. In this repo the web app and the API use different stacks, so one flat file would mix React advice with Spring Boot advice. Instead the instructions are layered:
 
 ![Root AGENTS.md provides shared rules. API and web AGENTS.md files add stack-specific rules; a slice that changes both apps uses both sets alongside the root guidance.](images/ai-layered-instructions.svg)
 
@@ -225,7 +225,7 @@ The root `AGENTS.md` also links to the per-app files, so even a tool that only r
 A monorepo isn't automatically good for agents. Watch out for:
 
 - **Context flooding.** A large repo has more than an agent can usefully read. Point it at the relevant packages, keep per-app instructions short, and use `--filter` for narrow tasks.
-- **Noise from generated files.** `dist/`, `node_modules/` and the generated Prisma client aren't source code. They're gitignored, and agents should leave them alone.
+- **Noise from generated files.** `dist/`, `target/`, `node_modules/` and the generated TypeScript client aren't source code. They're gitignored, and agents should leave them alone.
 - **Edits that are too large.** Being able to change everything in one diff doesn't mean every change should. Keep slices thin.
 
 ---
@@ -249,6 +249,6 @@ This isn't part of the session. If you're curious, run these from the repo root.
 
 ```bash
 pnpm turbo run build                     # run it twice: the second run is almost entirely cached
-pnpm turbo run test --filter=@erp/api    # test one package (its dependencies still build first)
+pnpm turbo run test --filter=@erp/web    # test one package (its dependencies still build first)
 pnpm turbo run build --graph             # print the task graph (Graphviz DOT format)
 ```

@@ -37,11 +37,11 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'pnpm --filter @erp/api start',
+      command: 'mvn -q -B -f ../api/pom.xml spring-boot:run',
       url: `http://localhost:${apiPort}/api/health`,
       env: { PORT: apiPort },
       reuseExistingServer: !isCI,
-      timeout: 60_000,
+      timeout: 120_000,
     },
     {
       command: `pnpm --filter @erp/web preview --port ${webPort}`,

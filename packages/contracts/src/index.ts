@@ -1,19 +1,15 @@
-import { authContract } from './auth.js';
-import { healthContract } from './health.js';
-
-export * from './auth.js';
-export * from './health.js';
-
 /**
- * The single source of truth for the HTTP API.
- * - apps/api implements it (see `@Implement(...)` in the Nest controllers)
- * - apps/web calls it through a fully typed client (see `src/lib/orpc.ts`)
+ * The TypeScript face of the HTTP API, generated from the Java API's OpenAPI
+ * spec (openapi.json). Java owns the contract; do not hand-edit src/generated.
  *
- * Add new feature contracts here, e.g. `customers: customersContract`.
+ * - apps/web calls the generated TanStack Query hooks (useLogin, useMe, ...).
+ * - Regenerate with `pnpm --filter @erp/contracts generate` after the spec changes.
  */
-export const contract = {
-  auth: authContract,
-  health: healthContract,
-};
 
-export type Contract = typeof contract;
+export * from './generated/model/index.js';
+export * from './generated/auth/auth.js';
+export * from './generated/health/health.js';
+export { apiFetch, ApiError } from './fetcher.js';
+
+// The old contract exposed the signed-in user as `User`. Keep that name.
+export type { UserDto as User } from './generated/model/index.js';

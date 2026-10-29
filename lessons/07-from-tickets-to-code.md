@@ -74,7 +74,7 @@ While you are here, read the workflow that `CI` names. It is one job, and it has
 cat .github/workflows/ci.yml
 ```
 
-It runs on every pull request and on every push to `main`. The job installs with `--frozen-lockfile`, so a lockfile the agent forgot to commit fails here instead of on someone else's machine. Then `pnpm format:check`, then `pnpm turbo run lint typecheck test build`: the same four tasks as `pnpm check`, plus Prettier, on a clean Ubuntu runner with the Node version from `.nvmrc`. No database is started; the api specs stub Prisma, so the job is green in under a minute on a fresh fork. Everything the agent is told to run before its last commit, this job runs again without the agent.
+It runs on every pull request and on every push to `main`. The job installs with `--frozen-lockfile`, so a lockfile the agent forgot to commit fails here instead of on someone else's machine. Then `pnpm format:check`, then `pnpm turbo run lint typecheck test build` for the web and shared packages, then `mvn verify` for the Java API, on a clean Ubuntu runner with the Node version from `.nvmrc` and JDK 21. The API's unit tests mock the repository, so the `check` job needs no database and is green quickly on a fresh fork. Everything the agent is told to run before its last commit, this job runs again without the agent.
 
 One thing to notice: the trigger is `pull_request`, with no branch filter, so it fires for whichever repository the PR is opened on. That is the second reason `gh repo set-default` above must point at your fork. A PR opened against the workshop repository by mistake still gets a CI run, but on VaridenTech's Actions tab, not yours, and `gh pr checks` in section 5 won't find it.
 
@@ -89,7 +89,7 @@ git push
 
 Commit it now, on `main`, before you branch. Otherwise it ends up inside the ticket's pull request.
 
-**Start the database.** The first ticket changes the Prisma schema, which means a migration, and `prisma migrate dev` needs a running Postgres. You also need the app running for the demo step. Either of lesson 1's routes works:
+**Start the database.** The first ticket changes the JPA model, which means a new Flyway migration that runs when the API boots, and that needs a running Postgres. You also need the app running for the demo step. Either of lesson 1's routes works:
 
 ```bash
 pnpm dev:local                                       # Postgres in Docker, migrate, seed, then both apps
@@ -183,7 +183,7 @@ The rules are a file for the reason lesson 2 gave: one kind of task, done many t
 The run has a shape, and it is worth watching for it:
 
 1. **It states the ticket's title** before anything else. If the title isn't your ticket, stop. `#16` can resolve against a local numbered list instead of the tracker, and the skill was changed to say the title precisely so you can catch this.
-2. **It explores**, reads the spec and the ticket, and then **proposes seams** with a line each on what they catch and miss. For `#16`: contract schema tests for the role and user shapes, and controller specs with a stubbed `PrismaService` for the role guard. Say yes. If it proposes a seam the ticket doesn't name, ask why before you agree.
+2. **It explores**, reads the spec and the ticket, and then **proposes seams** with a line each on what they catch and miss. For `#16`: the generated-contract check for the role and user shapes, and controller tests with a mocked repository for the role rule. Say yes. If it proposes a seam the ticket doesn't name, ask why before you agree.
 3. **Red, then green, one slice at a time.** A failing test at one seam, the minimal code to pass it, repeat. Typechecks and single test files run often. The full `pnpm check` runs once near the end. If you see all the tests written first and then all the code, that is the horizontal slicing the `tdd` skill warns about; say so.
 4. **A commit, then the review.** Two sub-agents report under `## Standards` and `## Spec`. Lesson 6 explained what they are: two fresh windows that never saw the code being written, each given the diff and one question. It fixes what they found and commits again. Watch how little of their work reaches your window: a short report each, not the files they read.
 5. **A push and a pull request.** The run ends with a URL. That is the hand-off.

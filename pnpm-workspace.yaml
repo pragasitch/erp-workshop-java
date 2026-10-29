@@ -10,11 +10,14 @@ supportedArchitectures:
   cpu: [current, x64, arm64]
   libc: [current, glibc]
 
-# Dependencies allowed to run install scripts (pnpm blocks them by default).
+# Build-script policy. pnpm blocks dependency install scripts by default and,
+# with strictDepBuilds enabled (the default in pnpm 11+), fails the whole install
+# with ERR_PNPM_IGNORED_BUILDS for any build script that is not listed here.
+# `true` runs the script; `false` deliberately skips it without failing. @scarf/scarf
+# is analytics-only, so we skip its script but still exempt it from the strict check.
 allowBuilds:
-  '@prisma/engines': true
   esbuild: true
-  prisma: true
+  '@scarf/scarf': false
 
 # The containers and your machine use different pnpm stores. Don't auto-reinstall
 # before every `pnpm run`/`pnpm exec` just because node_modules was installed on the other side.
