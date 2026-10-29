@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "Prisma.prisma",
+    "vitest.explorer",
+    "ms-azuretools.vscode-containers",
+    "ms-vscode-remote.remote-containers"
+  ]
+}

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+<title id="title">What lands on GitHub: one spec issue, tickets as sub-issues, blocking edges between them</title><desc id="desc">A parent issue, the spec, at the top. Below it, tickets as sub-issues arranged in four columns from left to right. Arrows run from a blocker to the ticket it blocks. The left column, roles and seed data, has no blockers and is highlighted as the frontier an agent can start on now. Later columns, stores suppliers and products, stock view, purchase orders, goods receipts, sales, reports, wait for the arrows into them to close. Every ticket carries the ready-for-agent label.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#64748b"/></marker>
+<style>text {font-family:Arial,Helvetica,sans-serif;fill:#172033} .title {font-size:30px;font-weight:700} .heading {font-size:24px;font-weight:700} .label {font-size:20px;font-weight:600} .body {font-size:20px;fill:#475569} .small {font-size:17px;fill:#475569} .code {font-family:Menlo,Consolas,monospace;font-size:15px;fill:#475569} .badge {font-size:14px;font-weight:700;fill:#ffffff} .arrow {fill:none;stroke:#64748b;stroke-width:2.5;marker-end:url(#arrow)} .child {fill:none;stroke:#94a3b8;stroke-width:2;stroke-dasharray:5 4}</style></defs>
+<rect width="1200" height="760" fill="white"/>
+<rect x="24" y="24" width="1152" height="712" rx="12" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+<text x="600" y="78" class="title" text-anchor="middle">What lands on GitHub</text>
+<text x="600" y="114" class="body" text-anchor="middle">One spec issue. Tickets as its sub-issues. An arrow means "must close before this can start".</text>
+
+<rect x="380" y="140" width="440" height="78" rx="12" fill="#eef2f7" stroke="#94a3b8" stroke-width="2"/>
+<text x="600" y="172" class="label" text-anchor="middle">#12  Spec: Retail ERP first release</text>
+<text x="600" y="200" class="code" text-anchor="middle">user stories, decisions, out of scope</text>
+
+<path d="M600 218 V246 H180 V268" class="child"/><path d="M600 246 H470 V268" class="child"/><path d="M600 246 H760 V268" class="child"/><path d="M600 246 H1040 V268" class="child"/>
+<text x="92" y="252" class="small">sub-issues</text>
+
+<rect x="60" y="272" width="240" height="370" rx="12" fill="#d9f2e9" stroke="#429782" stroke-width="2"/>
+<text x="180" y="304" class="label" text-anchor="middle">Frontier: start now</text>
+<text x="180" y="328" class="small" text-anchor="middle">no open blockers</text>
+<rect x="80" y="346" width="200" height="78" rx="10" fill="#ffffff" stroke="#429782" stroke-width="2"/>
+<text x="92" y="372" class="label">#13 Roles and</text><text x="92" y="396" class="label">test users</text><text x="92" y="416" class="code">Covers: NFR-01, 8.1</text>
+<rect x="80" y="440" width="200" height="78" rx="10" fill="#ffffff" stroke="#429782" stroke-width="2"/>
+<text x="92" y="466" class="label">#14 Stores and</text><text x="92" y="490" class="label">suppliers</text><text x="92" y="510" class="code">Covers: MD-03</text>
+
+<rect x="350" y="272" width="240" height="370" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="470" y="304" class="label" text-anchor="middle">Blocked by one</text>
+<text x="470" y="328" class="small" text-anchor="middle">opens when its blocker closes</text>
+<rect x="370" y="346" width="200" height="78" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="382" y="372" class="label">#15 Products</text><text x="382" y="396" class="label">and thresholds</text><text x="382" y="416" class="code">Covers: MD-01, MD-02</text>
+<rect x="370" y="440" width="200" height="78" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="382" y="466" class="label">#16 Stock view</text><text x="382" y="490" class="label">and low stock</text><text x="382" y="510" class="code">Covers: INV-01</text>
+
+<rect x="640" y="272" width="240" height="370" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="760" y="304" class="label" text-anchor="middle">Blocked by several</text>
+<text x="760" y="328" class="small" text-anchor="middle">documents that move stock</text>
+<rect x="660" y="346" width="200" height="78" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="672" y="372" class="label">#18 Approve a</text><text x="672" y="396" class="label">purchase order</text><text x="672" y="416" class="code">Covers: PO-02, PO-03</text>
+<rect x="660" y="440" width="200" height="78" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="672" y="466" class="label">#20 Receive goods</text><text x="672" y="490" class="label">once, not twice</text><text x="672" y="510" class="code">Covers: GR-03, GR-04</text>
+<rect x="660" y="534" width="200" height="78" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="672" y="560" class="label">#23 Confirm a sale</text><text x="672" y="584" class="label">with stock check</text><text x="672" y="604" class="code">Covers: SAL-02, SAL-03</text>
+
+<rect x="930" y="272" width="220" height="370" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="1040" y="304" class="label" text-anchor="middle">Last</text>
+<text x="1040" y="328" class="small" text-anchor="middle">needs every document type</text>
+<rect x="950" y="346" width="180" height="78" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="962" y="372" class="label">#27 Movement</text><text x="962" y="396" class="label">history report</text><text x="962" y="416" class="code">Covers: RPT-03</text>
+<rect x="950" y="440" width="180" height="78" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="962" y="466" class="label">#29 Load test</text><text x="962" y="490" class="label">at scale</text><text x="962" y="510" class="code">Covers: NFR-05</text>
+
+<path d="M280 385 H366" class="arrow"/><path d="M280 479 H366" class="arrow"/>
+<path d="M570 385 H656" class="arrow"/><path d="M570 479 H656" class="arrow"/><path d="M570 500 Q620 560 656 573" class="arrow"/>
+<path d="M860 385 H946" class="arrow"/><path d="M860 479 H946" class="arrow"/>
+
+<rect x="60" y="664" width="1080" height="52" rx="12" fill="#eef2f7" stroke="#dce3eb" stroke-width="2"/>
+<rect x="84" y="678" width="140" height="24" rx="12" fill="#429782"/><text x="154" y="695" class="badge" text-anchor="middle">ready-for-agent</text>
+<text x="244" y="696" class="small">on every ticket. Issue numbers here are examples: yours will differ, and so will the breakdown.</text>
+</svg>

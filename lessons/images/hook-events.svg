@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">Where hooks can run</title><desc id="desc">A timeline of one session, left to right: the session starts, you type a prompt, the agent picks a tool call, the tool runs and its result comes back, the agent finishes its turn, the session ends. A loop arrow shows the agent making many tool calls per turn. Under each moment is the hook event that fires there: SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, Stop, SessionEnd. Only PreToolUse is highlighted as able to refuse the action in all three tools; the lesson uses that one. The others add context, see a result that already happened, or send the agent back to work. A note says every event gets JSON on stdin and answers with an exit code, but only PreToolUse sits before the action.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#64748b"/></marker>
+<marker id="arrow-red" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#b4443c"/></marker>
+<style>text {font-family:Arial,Helvetica,sans-serif;fill:#172033} .title {font-size:30px;font-weight:700} .label {font-size:21px;font-weight:600} .body {font-size:20px;fill:#475569} .small {font-size:17px;fill:#475569} .code {font-family:Menlo,Consolas,monospace;font-size:15px;fill:#172033} .arrow {fill:none;stroke:#64748b;stroke-width:2.5;marker-end:url(#arrow)} .arrow-red {fill:none;stroke:#b4443c;stroke-width:2.5;marker-end:url(#arrow-red)} .who {font-size:15px;font-weight:700;letter-spacing:1px}</style></defs>
+<rect width="1200" height="720" fill="white"/>
+<rect x="24" y="24" width="1152" height="672" rx="12" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+<text x="600" y="78" class="title" text-anchor="middle">Where hooks can run</text>
+<text x="600" y="114" class="body" text-anchor="middle">Six moments in a session where the harness will run a script. One of them sits before the action.</text>
+
+<!-- what happens in the turn -->
+<text x="110" y="176" class="small" text-anchor="middle">Session</text>
+<text x="110" y="198" class="small" text-anchor="middle">starts</text>
+<text x="306" y="176" class="small" text-anchor="middle">You type</text>
+<text x="306" y="198" class="small" text-anchor="middle">a prompt</text>
+<text x="502" y="176" class="label" text-anchor="middle">Agent picks</text>
+<text x="502" y="200" class="label" text-anchor="middle">a tool call</text>
+<text x="698" y="176" class="small" text-anchor="middle">Tool runs,</text>
+<text x="698" y="198" class="small" text-anchor="middle">result comes back</text>
+<text x="894" y="176" class="small" text-anchor="middle">Agent finishes</text>
+<text x="894" y="198" class="small" text-anchor="middle">its turn</text>
+<text x="1090" y="176" class="small" text-anchor="middle">Session</text>
+<text x="1090" y="198" class="small" text-anchor="middle">ends</text>
+
+<!-- timeline -->
+<path d="M70 250 H1130" class="arrow"/>
+<circle cx="110" cy="250" r="9" fill="#ffffff" stroke="#64748b" stroke-width="2.5"/>
+<circle cx="306" cy="250" r="9" fill="#ffffff" stroke="#64748b" stroke-width="2.5"/>
+<circle cx="502" cy="250" r="11" fill="#b4443c" stroke="#b4443c" stroke-width="2.5"/>
+<circle cx="698" cy="250" r="9" fill="#ffffff" stroke="#64748b" stroke-width="2.5"/>
+<circle cx="894" cy="250" r="9" fill="#ffffff" stroke="#64748b" stroke-width="2.5"/>
+<circle cx="1090" cy="250" r="9" fill="#ffffff" stroke="#64748b" stroke-width="2.5"/>
+
+<!-- loop: many tool calls per turn -->
+<path d="M698 238 V216 H502 V236" class="arrow"/>
+<text x="600" y="240" class="small" text-anchor="middle" font-size="15px">many tool calls per turn</text>
+
+<!-- ticks from timeline to cards -->
+<path d="M110 262 V336" fill="none" stroke="#b6c0cc" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M306 262 V336" fill="none" stroke="#b6c0cc" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M502 266 V336" fill="none" stroke="#b4443c" stroke-width="2"/>
+<path d="M698 262 V336" fill="none" stroke="#b6c0cc" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M894 262 V336" fill="none" stroke="#b6c0cc" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M1090 262 V336" fill="none" stroke="#b6c0cc" stroke-width="2" stroke-dasharray="4 4"/>
+
+<!-- SessionStart -->
+<rect x="22" y="338" width="176" height="200" rx="12" fill="#ffffff" stroke="#b6c0cc" stroke-width="2"/>
+<text x="110" y="370" class="code" text-anchor="middle" font-weight="700">SessionStart</text>
+<text x="110" y="394" class="small" text-anchor="middle" font-style="italic">Kiro 2.x: agentSpawn</text>
+<text x="110" y="430" class="small" text-anchor="middle">Adds context:</text>
+<text x="110" y="452" class="small" text-anchor="middle">stdout goes into</text>
+<text x="110" y="474" class="small" text-anchor="middle">the window.</text>
+<text x="110" y="512" class="who" text-anchor="middle" fill="#64748b">CAN'T REFUSE</text>
+
+<!-- UserPromptSubmit -->
+<rect x="218" y="338" width="176" height="200" rx="12" fill="#ffffff" stroke="#b6c0cc" stroke-width="2"/>
+<text x="306" y="370" class="code" text-anchor="middle" font-weight="700">UserPromptSubmit</text>
+<text x="306" y="408" class="small" text-anchor="middle">Sees the prompt</text>
+<text x="306" y="430" class="small" text-anchor="middle">before the agent does.</text>
+<text x="306" y="462" class="small" text-anchor="middle">Exit 2 rejects it in</text>
+<text x="306" y="484" class="small" text-anchor="middle">Claude Code and Codex;</text>
+<text x="306" y="506" class="small" text-anchor="middle">Kiro only observes.</text>
+
+<!-- PreToolUse -->
+<rect x="414" y="338" width="176" height="200" rx="12" fill="#fde8e6" stroke="#b4443c" stroke-width="3"/>
+<text x="502" y="370" class="code" text-anchor="middle" font-weight="700">PreToolUse</text>
+<text x="502" y="408" class="small" text-anchor="middle">Sees the call before</text>
+<text x="502" y="430" class="small" text-anchor="middle">it runs. Exit 2 and</text>
+<text x="502" y="452" class="small" text-anchor="middle">it never runs, in</text>
+<text x="502" y="474" class="small" text-anchor="middle">all three tools.</text>
+<text x="502" y="512" class="who" text-anchor="middle" fill="#b4443c">THIS LESSON</text>
+
+<!-- PostToolUse -->
+<rect x="610" y="338" width="176" height="200" rx="12" fill="#ffffff" stroke="#b6c0cc" stroke-width="2"/>
+<text x="698" y="370" class="code" text-anchor="middle" font-weight="700">PostToolUse</text>
+<text x="698" y="408" class="small" text-anchor="middle">Sees the result.</text>
+<text x="698" y="430" class="small" text-anchor="middle">The command already</text>
+<text x="698" y="452" class="small" text-anchor="middle">ran. stderr goes to</text>
+<text x="698" y="474" class="small" text-anchor="middle">the agent as feedback.</text>
+<text x="698" y="512" class="who" text-anchor="middle" fill="#64748b">TOO LATE TO STOP</text>
+
+<!-- Stop -->
+<rect x="806" y="338" width="176" height="200" rx="12" fill="#ffffff" stroke="#b6c0cc" stroke-width="2"/>
+<text x="894" y="370" class="code" text-anchor="middle" font-weight="700">Stop</text>
+<text x="894" y="408" class="small" text-anchor="middle">The agent thinks it</text>
+<text x="894" y="430" class="small" text-anchor="middle">is done. Exit 2 sends</text>
+<text x="894" y="452" class="small" text-anchor="middle">it back to work with</text>
+<text x="894" y="474" class="small" text-anchor="middle">stderr as the reason.</text>
+<text x="894" y="512" class="who" text-anchor="middle" fill="#64748b">"NOT YET"</text>
+
+<!-- SessionEnd -->
+<rect x="1002" y="338" width="176" height="200" rx="12" fill="#ffffff" stroke="#b6c0cc" stroke-width="2"/>
+<text x="1090" y="370" class="code" text-anchor="middle" font-weight="700">SessionEnd</text>
+<text x="1090" y="408" class="small" text-anchor="middle">Clean-up and logs.</text>
+<text x="1090" y="430" class="small" text-anchor="middle">Nothing left</text>
+<text x="1090" y="452" class="small" text-anchor="middle">to refuse.</text>
+<text x="1090" y="512" class="who" text-anchor="middle" fill="#64748b">CAN'T REFUSE</text>
+
+<!-- note -->
+<rect x="64" y="580" width="1072" height="84" rx="12" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/>
+<text x="84" y="614" class="who" fill="#64748b">ALL SIX</text><text x="170" y="614" class="small">get a JSON description of the moment on stdin and answer with an exit code. Same contract, same script shape.</text>
+<text x="84" y="644" class="who" fill="#b4443c">ONLY ONE</text><text x="190" y="644" class="small">sits between the agent deciding and the shell running. The rest see a result that already happened, or no action at all.</text>
+</svg>

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "ui": "tui",
+  "globalDependencies": [".env"],
+  "globalPassThroughEnv": [
+    "NODE_ENV",
+    "PORT",
+    "HOST",
+    "DATABASE_URL",
+    "AUTH_SECRET",
+    "API_PROXY_TARGET",
+    "WATCH_POLLING",
+    "CHOKIDAR_USEPOLLING",
+    "TSC_WATCHFILE",
+    "TSC_WATCHDIRECTORY"
+  ],
+  "tasks": {
+    "db:generate": {
+      "cache": false
+    },
+    "build": {
+      "dependsOn": ["^build", "db:generate"],
+      "outputs": ["dist/**"]
+    },
+    "dev": {
+      "dependsOn": ["^build", "db:generate"],
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^build", "db:generate"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build", "db:generate"]
+    },
+    "test": {
+      "dependsOn": ["^build", "db:generate"]
+    },
+    "e2e": {
+      "dependsOn": ["@erp/api#build", "@erp/web#build"],
+      "passThroughEnv": [
+        "CI",
+        "GITHUB_ACTIONS",
+        "E2E_BASE_URL",
+        "API_PORT",
+        "WEB_PORT",
+        "PLAYWRIGHT_BROWSERS_PATH"
+      ],
+      "cache": false
+    }
+  }
+}

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="850" viewBox="0 0 1200 850" role="img" aria-labelledby="title desc">
+  <title id="title">What this repository looks like</title>
+  <desc id="desc">The repository contains apps/web and apps/api, four shared packages under packages, and the root configuration files pnpm-workspace.yaml and turbo.json. Each package's name and purpose are shown alongside its folder.</desc>
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+    .heading { font-size: 28px; font-weight: 700; }
+    .folder { font-family: Menlo, Consolas, monospace; font-size: 21px; font-weight: 700; }
+    .path { font-family: Menlo, Consolas, monospace; font-size: 18px; }
+    .package { font-family: Menlo, Consolas, monospace; font-size: 17px; fill: #475569; }
+    .sub { font-size: 18px; fill: #475569; }
+    .branch { fill: none; stroke: #94a3b8; stroke-width: 2; }
+  </style>
+  <rect width="1200" height="850" fill="#ffffff"/>
+  <rect x="24" y="24" width="1152" height="802" rx="20" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+  <text x="600" y="78" text-anchor="middle" class="heading">What this repository looks like</text>
+  <rect x="56" y="110" width="1088" height="190" rx="14" fill="#fffaf3" stroke="#e9d5b5" stroke-width="2"/>
+  <text x="84" y="150" class="folder">apps/</text>
+  <text x="240" y="150" class="sub">Applications</text>
+  <path d="M96 173 V260 M96 200 H120 M96 260 H120" class="branch"/>
+  <rect x="56" y="322" width="1088" height="310" rx="14" fill="#f2faf8" stroke="#b7ddd3" stroke-width="2"/>
+  <text x="84" y="362" class="folder">packages/</text>
+  <text x="240" y="362" class="sub">Shared packages</text>
+  <path d="M96 385 V592 M96 412 H120 M96 472 H120 M96 532 H120 M96 592 H120" class="branch"/>
+  <rect x="56" y="654" width="1088" height="144" rx="14" fill="#eef2f7" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="84" y="690" class="sub">Root configuration</text>
+  <text x="136" y="206" class="path">web/</text>
+  <text x="390" y="206" class="package">@erp/web</text>
+  <text x="700" y="206" class="sub">React app</text>
+  <text x="136" y="266" class="path">api/</text>
+  <text x="390" y="266" class="package">@erp/api</text>
+  <text x="700" y="266" class="sub">NestJS app</text>
+  <text x="136" y="418" class="path">contracts/</text>
+  <text x="390" y="418" class="package">@erp/contracts</text>
+  <text x="700" y="418" class="sub">API contract: routes + Zod schemas</text>
+  <text x="136" y="478" class="path">database/</text>
+  <text x="390" y="478" class="package">@erp/database</text>
+  <text x="700" y="478" class="sub">Prisma schema, migrations, client</text>
+  <text x="136" y="538" class="path">typescript-config/</text>
+  <text x="390" y="538" class="package">@erp/typescript-config</text>
+  <text x="700" y="538" class="sub">Shared TypeScript configuration</text>
+  <text x="136" y="598" class="path">eslint-config/</text>
+  <text x="390" y="598" class="package">@erp/eslint-config</text>
+  <text x="700" y="598" class="sub">Shared ESLint configuration</text>
+  <text x="84" y="734" class="path">pnpm-workspace.yaml</text>
+  <text x="390" y="734" class="sub">Which folders are packages</text>
+  <text x="84" y="774" class="path">turbo.json</text>
+  <text x="390" y="774" class="sub">How tasks run across packages</text>
+</svg>

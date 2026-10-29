@@ -1,0 +1,44 @@
+{
+  "name": "@erp/api",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch --enable-source-maps .dev/main.js",
+    "dev:prepare": "tsc -p tsconfig.build.json --outDir .dev",
+    "dev:compile": "tsc -p tsconfig.build.json --outDir .dev --watch --preserveWatchOutput",
+    "build": "nest build",
+    "start": "node dist/main.js",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@erp/contracts": "workspace:*",
+    "@erp/database": "workspace:*",
+    "@nestjs/common": "^12.2.0",
+    "@nestjs/config": "^12.0.1",
+    "@nestjs/core": "^12.2.0",
+    "@nestjs/platform-express": "^12.2.0",
+    "@orpc/nest": "~1.15.7",
+    "@orpc/openapi": "~1.15.7",
+    "@orpc/server": "~1.15.7",
+    "@orpc/zod": "~1.15.7",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@erp/eslint-config": "workspace:*",
+    "@erp/typescript-config": "workspace:*",
+    "@nestjs/cli": "^12.0.10",
+    "@nestjs/schematics": "^12.0.10",
+    "@nestjs/testing": "^12.2.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.0.0",
+    "eslint": "^10.13.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
+  }
+}

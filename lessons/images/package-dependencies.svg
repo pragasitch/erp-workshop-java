@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="740" viewBox="0 0 1200 740" role="img" aria-labelledby="title desc">
+  <title id="title">How the packages depend on each other</title>
+  <desc id="desc">Solid runtime dependency arrows: @erp/web to @erp/contracts, @erp/api to @erp/contracts, and @erp/api to @erp/database. Dashed shared tooling arrows connect all four packages to @erp/typescript-config and @erp/eslint-config.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#64748b"/></marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; text-anchor: middle; }
+      .heading { font-size: 28px; font-weight: 700; }
+      .node { font-size: 22px; font-weight: 600; }
+      .sub { font-size: 18px; fill: #475569; }
+      .runtime, .tooling { fill: none; stroke: #64748b; stroke-width: 2.5; marker-end: url(#arrow); }
+      .tooling { stroke-dasharray: 8 7; }
+    </style>
+  </defs>
+  <rect width="1200" height="740" fill="#ffffff"/>
+  <rect x="24" y="24" width="1152" height="692" rx="20" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+  <text x="600" y="78" class="heading">How the packages depend on each other</text>
+  <g aria-label="Runtime dependencies">
+    <path data-from="web" data-to="contracts" d="M340 220 V270 H380 V320" class="runtime"/>
+    <path data-from="api" data-to="contracts" d="M800 220 V270 H500 V320" class="runtime"/>
+    <path data-from="api" data-to="database" d="M920 220 V320" class="runtime"/>
+  </g>
+  <g aria-label="Shared tooling dependencies">
+    <path data-from="web" data-to="config" d="M200 175 H120 V590 H390" class="tooling"/>
+    <path data-from="api" data-to="config" d="M1000 175 H1080 V590 H810" class="tooling"/>
+    <path data-from="contracts" data-to="config" d="M440 420 V475 H500 V540" class="tooling"/>
+    <path data-from="database" data-to="config" d="M880 420 V475 H700 V540" class="tooling"/>
+  </g>
+  <rect x="200" y="130" width="280" height="90" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+  <text x="340" y="168" class="node">@erp/web</text>
+  <text x="340" y="198" class="sub">React app</text>
+  <rect x="720" y="130" width="280" height="90" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+  <text x="860" y="168" class="node">@erp/api</text>
+  <text x="860" y="198" class="sub">NestJS app</text>
+  <rect x="280" y="330" width="320" height="90" rx="12" fill="#d9f2e9" stroke="#429782" stroke-width="2"/>
+  <text x="440" y="368" class="node">@erp/contracts</text>
+  <text x="440" y="398" class="sub">routes + Zod schemas</text>
+  <rect x="740" y="330" width="280" height="90" rx="12" fill="#ffedd0" stroke="#bf9458" stroke-width="2"/>
+  <text x="880" y="368" class="node">@erp/database</text>
+  <text x="880" y="398" class="sub">Prisma client</text>
+  <rect x="400" y="550" width="400" height="90" rx="12" fill="#eef2f7" stroke="#94a3b8" stroke-width="2"/>
+  <text x="600" y="587" class="node">@erp/typescript-config</text>
+  <text x="600" y="618" class="node">@erp/eslint-config</text>
+  <path d="M330 680 H385" fill="none" stroke="#64748b" stroke-width="2.5"/>
+  <text x="475" y="686" class="sub">Runtime dependency</text>
+  <path d="M650 680 H705" fill="none" stroke="#64748b" stroke-width="2.5" stroke-dasharray="8 7"/>
+  <text x="800" y="686" class="sub">Shared tooling</text>
+</svg>

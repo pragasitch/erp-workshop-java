@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">The context window is a budget</title><desc id="desc">A 200K-token context window drawn as one bar. Fixed costs paid at the start of every session: system prompt and tool definitions, instruction files, skill names and descriptions. Variable costs that grow during the session: files the agent reads, tool and test output, the conversation itself. Everything the agent must remember competes for the same space.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#64748b"/></marker>
+<style>text {font-family:Arial,Helvetica,sans-serif;fill:#172033} .title {font-size:30px;font-weight:700} .heading {font-size:24px;font-weight:700} .label {font-size:21px;font-weight:600} .body {font-size:20px;fill:#475569} .small {font-size:18px;fill:#475569} .code {font-family:Menlo,Consolas,monospace;font-size:20px} .arrow {fill:none;stroke:#64748b;stroke-width:2.5;marker-end:url(#arrow)}</style></defs>
+<rect width="1200" height="720" fill="white"/>
+<rect x="24" y="24" width="1152" height="672" rx="12" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+<text x="600" y="78" class="title" text-anchor="middle">The context window is a budget</text><text x="600" y="114" class="body" text-anchor="middle">Everything the model can "see" during one session shares the same space.</text>
+<text x="80" y="176" class="heading">One session, 200K tokens</text>
+<rect x="80" y="196" width="1040" height="96" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<rect x="80" y="196" width="130" height="96" rx="10" fill="#eef2f7" stroke="#94a3b8" stroke-width="2"/>
+<rect x="210" y="196" width="60" height="96" fill="#d9f2e9" stroke="#429782" stroke-width="2"/>
+<rect x="270" y="196" width="18" height="96" fill="#bfe3d6" stroke="#429782" stroke-width="2"/>
+<rect x="288" y="196" width="520" height="96" fill="#fff4d6" stroke="#c08a1d" stroke-width="2"/>
+<text x="548" y="252" class="label" text-anchor="middle">Files read · tool and test output · conversation</text>
+<text x="964" y="252" class="small" text-anchor="middle">free space</text>
+<text x="80" y="326" class="small">0</text><text x="600" y="326" class="small" text-anchor="middle">100K</text><text x="1120" y="326" class="small" text-anchor="end">200K</text>
+<path d="M145 292 V372" class="arrow"/><path d="M240 292 V372" class="arrow"/><path d="M279 292 V372" class="arrow"/>
+<rect x="64" y="382" width="330" height="118" rx="12" fill="#eef2f7" stroke="#94a3b8" stroke-width="2"/><text x="229" y="420" class="label" text-anchor="middle">System prompt + tools</text><text x="229" y="450" class="body" text-anchor="middle">The agent's built-in instructions</text><text x="229" y="478" class="body" text-anchor="middle">and every tool definition</text>
+<rect x="414" y="382" width="330" height="118" rx="12" fill="#d9f2e9" stroke="#429782" stroke-width="2"/><text x="579" y="420" class="label" text-anchor="middle">Instruction files</text><text x="579" y="450" class="body" text-anchor="middle">AGENTS.md / CLAUDE.md, root</text><text x="579" y="478" class="body" text-anchor="middle">plus the apps being edited</text>
+<rect x="764" y="382" width="372" height="118" rx="12" fill="#bfe3d6" stroke="#429782" stroke-width="2"/><text x="950" y="420" class="label" text-anchor="middle">Skill names + descriptions</text><text x="950" y="450" class="body" text-anchor="middle">One line per skill. The body is</text><text x="950" y="478" class="body" text-anchor="middle">loaded only when the task matches</text>
+<rect x="64" y="536" width="520" height="130" rx="12" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/><text x="324" y="580" class="heading" text-anchor="middle">Fixed cost</text><text x="324" y="614" class="body" text-anchor="middle">Paid at the start of every session,</text><text x="324" y="642" class="body" text-anchor="middle">before the agent has done anything.</text>
+<rect x="616" y="536" width="520" height="130" rx="12" fill="#fff4d6" stroke="#c08a1d" stroke-width="2"/><text x="876" y="580" class="heading" text-anchor="middle">Grows with the session</text><text x="876" y="614" class="body" text-anchor="middle">Every file read, every build log, every</text><text x="876" y="642" class="body" text-anchor="middle">answer stays in the window until it is cleared.</text>
+</svg>

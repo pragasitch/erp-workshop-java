@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+<title id="title">Quality drops long before the window is full</title><desc id="desc">A chart of output quality against context used on a 200K-token window. Quality is flat in the smart zone up to roughly 40 percent of the window, declines as returns diminish, and falls steeply in the dumb zone past roughly 150K tokens. Three mechanisms are listed: context rot, lost in the middle, and distractors.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#64748b"/></marker>
+<style>text {font-family:Arial,Helvetica,sans-serif;fill:#172033} .title {font-size:30px;font-weight:700} .heading {font-size:24px;font-weight:700} .label {font-size:21px;font-weight:600} .body {font-size:20px;fill:#475569} .small {font-size:18px;fill:#475569} .code {font-family:Menlo,Consolas,monospace;font-size:20px} .axis {stroke:#64748b;stroke-width:2.5;fill:none} .curve {fill:none;stroke:#172033;stroke-width:4}</style></defs>
+<rect width="1200" height="760" fill="white"/>
+<rect x="24" y="24" width="1152" height="712" rx="12" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+<text x="600" y="78" class="title" text-anchor="middle">Quality drops long before the window is full</text><text x="600" y="114" class="body" text-anchor="middle">The advertised limit is 200K tokens. The usable range is much smaller.</text>
+<rect x="140" y="170" width="392" height="350" fill="#d9f2e9"/>
+<rect x="532" y="170" width="343" height="350" fill="#fff4d6"/>
+<rect x="875" y="170" width="245" height="350" fill="#fde2e2"/>
+<text x="336" y="204" class="label" text-anchor="middle">Smart zone</text><text x="336" y="230" class="small" text-anchor="middle">up to ≈40% of the window</text>
+<text x="703" y="204" class="label" text-anchor="middle">Returns diminish</text><text x="703" y="230" class="small" text-anchor="middle">rules start getting skipped</text>
+<text x="997" y="204" class="label" text-anchor="middle">Dumb zone</text><text x="997" y="230" class="small" text-anchor="middle">past ≈150K tokens</text>
+<path d="M140 270 L532 276 C 660 282, 790 330, 875 370 C 950 405, 1040 460, 1120 505" class="curve"/>
+<path d="M140 520 H1120" class="axis"/><path d="M140 520 V170" class="axis"/>
+<text x="110" y="276" class="small" text-anchor="end">high</text><text x="110" y="516" class="small" text-anchor="end">low</text>
+<text x="92" y="350" class="small" text-anchor="middle" transform="rotate(-90 92 350)">output quality</text>
+<path d="M385 520 V530 M630 520 V530 M875 520 V530" class="axis"/>
+<text x="140" y="556" class="small" text-anchor="middle">0</text><text x="385" y="556" class="small" text-anchor="middle">50K</text><text x="630" y="556" class="small" text-anchor="middle">100K</text><text x="875" y="556" class="small" text-anchor="middle">150K</text><text x="1120" y="556" class="small" text-anchor="middle">200K</text>
+<text x="630" y="586" class="body" text-anchor="middle">context used (tokens)</text>
+<rect x="64" y="612" width="346" height="100" rx="12" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/><text x="237" y="648" class="label" text-anchor="middle">Context rot</text><text x="237" y="676" class="small" text-anchor="middle">Recall gets worse as input grows,</text><text x="237" y="698" class="small" text-anchor="middle">even on trivial tasks (18 models tested)</text>
+<rect x="427" y="612" width="346" height="100" rx="12" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/><text x="600" y="648" class="label" text-anchor="middle">Lost in the middle</text><text x="600" y="676" class="small" text-anchor="middle">Start and end are remembered well.</text><text x="600" y="698" class="small" text-anchor="middle">The middle of the window is not.</text>
+<rect x="790" y="612" width="346" height="100" rx="12" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/><text x="963" y="648" class="label" text-anchor="middle">Distractors</text><text x="963" y="676" class="small" text-anchor="middle">Similar-but-wrong information</text><text x="963" y="698" class="small" text-anchor="middle">hurts more the longer the input gets</text>
+</svg>

@@ -1,0 +1,31 @@
+// Prisma schema: https://www.prisma.io/docs/orm/prisma-schema
+//
+// Only the auth models ship with the starter. We will design the ERP data model together in the workshop.
+// After adding/changing a model run:  pnpm db:migrate --name <describe-the-change>
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  /// Written by hashPassword() from @erp/database. Never returned by the API.
+  passwordHash String
+  role         Role     @default(STAFF)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

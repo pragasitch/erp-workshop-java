@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="title desc">
+  <title id="title">What a monorepo costs</title>
+  <desc id="desc">Four trade-offs: rebuilding every package slows builds as the repository grows; contracts must build before their consuming apps; CI must select relevant work instead of rebuilding everything for a documentation edit; repository access exposes all source code. Turborepo helps the first three with caching, task ordering and scoped runs. Repository access remains an organizational decision.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#64748b"/></marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 30px; font-weight: 700; text-anchor: middle; }
+      .heading { font-size: 24px; font-weight: 700; }
+      .body { font-size: 20px; fill: #475569; }
+      .label { font-size: 20px; font-weight: 600; text-anchor: middle; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 19px; text-anchor: middle; }
+      .line { fill: none; stroke: #64748b; stroke-width: 2.5; marker-end: url(#arrow); }
+      .number { font-size: 19px; font-weight: 700; fill: #805a22; text-anchor: middle; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#ffffff"/>
+  <rect x="24" y="24" width="1152" height="952" rx="20" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+  <text x="600" y="78" class="title">What a monorepo costs</text>
+  <text x="600" y="112" text-anchor="middle" class="body">Sharing a repository also means coordinating the work.</text>
+
+  <g aria-label="Builds grow with the repository">
+    <rect x="56" y="146" width="532" height="334" rx="14" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/>
+    <circle cx="90" cy="184" r="18" fill="#ffedd0"/><text x="90" y="191" class="number">1</text>
+    <text x="122" y="192" class="heading">More packages, more work</text>
+    <text x="84" y="231" class="body">If every command rebuilds everything,</text>
+    <text x="84" y="258" class="body">builds slow down as the repo grows.</text>
+    <text x="84" y="305" class="body">Small repo</text>
+    <rect x="220" y="283" width="84" height="30" rx="6" fill="#ffedd0" stroke="#bf9458"/>
+    <text x="84" y="351" class="body">Larger repo</text>
+    <rect x="220" y="329" width="84" height="30" rx="6" fill="#ffedd0" stroke="#bf9458"/>
+    <rect x="312" y="329" width="84" height="30" rx="6" fill="#ffedd0" stroke="#bf9458"/>
+    <rect x="404" y="329" width="84" height="30" rx="6" fill="#ffedd0" stroke="#bf9458"/>
+    <path d="M220 378 H540" class="line"/><text x="380" y="405" class="body" text-anchor="middle">time spent rebuilding</text>
+    <rect x="72" y="428" width="500" height="36" rx="8" fill="#d9f2e9"/>
+    <text x="322" y="453" class="label">Turborepo: reuse cached results</text>
+  </g>
+
+  <g aria-label="Build order matters">
+    <rect x="612" y="146" width="532" height="334" rx="14" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/>
+    <circle cx="646" cy="184" r="18" fill="#ffedd0"/><text x="646" y="191" class="number">2</text>
+    <text x="678" y="192" class="heading">Build order matters</text>
+    <text x="640" y="231" class="body">Build shared contracts before the apps</text>
+    <text x="640" y="258" class="body">that import their output.</text>
+    <rect x="640" y="309" width="230" height="58" rx="9" fill="#d9f2e9" stroke="#429782"/>
+    <text x="755" y="344" class="code">contracts: build</text>
+    <path d="M870 338 H900 V305 H928" class="line"/>
+    <path d="M900 338 V381 H928" class="line"/>
+    <rect x="934" y="280" width="182" height="50" rx="9" fill="#eef2f7" stroke="#94a3b8"/>
+    <rect x="934" y="356" width="182" height="50" rx="9" fill="#eef2f7" stroke="#94a3b8"/>
+    <text x="1025" y="312" class="code">web: build</text><text x="1025" y="388" class="code">api: build</text>
+    <rect x="628" y="428" width="500" height="36" rx="8" fill="#d9f2e9"/>
+    <text x="878" y="453" class="label">Turborepo: order tasks by dependencies</text>
+  </g>
+
+  <g aria-label="CI needs to select relevant work">
+    <rect x="56" y="504" width="532" height="334" rx="14" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/>
+    <circle cx="90" cy="542" r="18" fill="#ffedd0"/><text x="90" y="549" class="number">3</text>
+    <text x="122" y="550" class="heading">CI needs to be smarter</text>
+    <text x="84" y="589" class="body">A README edit should not trigger</text>
+    <text x="84" y="616" class="body">a fresh build of every package.</text>
+    <rect x="84" y="650" width="180" height="58" rx="9" fill="#eef2f7" stroke="#94a3b8"/>
+    <text x="174" y="685" class="code">README edit</text>
+    <path d="M264 679 H360" class="line"/>
+    <rect x="370" y="650" width="190" height="58" rx="9" fill="#ffedd0" stroke="#bf9458"/>
+    <text x="465" y="685" class="label">Rebuild all?</text>
+    <text x="322" y="757" text-anchor="middle" class="body">Choose work based on what changed.</text>
+    <rect x="72" y="786" width="500" height="36" rx="8" fill="#d9f2e9"/>
+    <text x="322" y="811" class="label">Turborepo: scoped runs + caching</text>
+  </g>
+
+  <g aria-label="Repository access is coarse">
+    <rect x="612" y="504" width="532" height="334" rx="14" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/>
+    <circle cx="646" cy="542" r="18" fill="#ffedd0"/><text x="646" y="549" class="number">4</text>
+    <text x="678" y="550" class="heading">Access control is coarser</text>
+    <text x="640" y="589" class="body">Repo access lets someone read all</text>
+    <text x="640" y="616" class="body">the source code inside it.</text>
+    <circle cx="674" cy="664" r="14" fill="#eef2f7" stroke="#64748b" stroke-width="2"/>
+    <path d="M650 709 V700 Q674 674 698 700 V709" fill="#eef2f7" stroke="#64748b" stroke-width="2"/>
+    <path d="M714 683 H762" class="line"/>
+    <rect x="774" y="642" width="342" height="120" rx="10" fill="#fffaf3" stroke="#bf9458" stroke-width="2"/>
+    <text x="945" y="673" class="label">One repository</text>
+    <rect x="790" y="692" width="148" height="48" rx="7" fill="#ffffff" stroke="#94a3b8"/>
+    <rect x="952" y="692" width="148" height="48" rx="7" fill="#ffffff" stroke="#94a3b8"/>
+    <text x="864" y="723" class="code">apps/</text><text x="1026" y="723" class="code">packages/</text>
+    <rect x="628" y="786" width="500" height="36" rx="8" fill="#ffedd0"/>
+    <text x="878" y="811" class="label">Team decision: repository boundaries</text>
+  </g>
+
+  <text x="600" y="895" text-anchor="middle" class="heading">Three tooling problems. One access decision.</text>
+  <text x="600" y="933" text-anchor="middle" class="body">Turborepo helps coordinate tasks; it does not control who can read the code.</text>
+</svg>

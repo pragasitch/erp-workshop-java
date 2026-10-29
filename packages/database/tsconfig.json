@@ -1,0 +1,7 @@
+{
+  "extends": "@erp/typescript-config/library.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src", "prisma", "*.config.ts"]
+}

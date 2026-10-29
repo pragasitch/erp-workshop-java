@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+<title id="title">Four states of the guard</title><desc id="desc">Four columns. Off: hooks are disabled or the hook is not registered, the script never runs, the reset runs, the agent sees its output, you see nothing special; this is where lesson 3 left you. Allows: the script exits 0 because no rule matched, the command runs, the agent sees its output, you see nothing because the hook is silent; the example is a migration. Refuses: a rule matched, the script writes one sentence to stderr and exits 2, the command never runs, the agent sees the sentence as the tool's error, you see the agent report the block and ask you. Broken: the script crashes, exits 1 or times out, the command runs anyway, the agent sees its output, you see the stderr as a warning; a broken hook fails open. A note at the bottom says the check in section 6 tells the states apart.</desc>
+<defs><style>text {font-family:Arial,Helvetica,sans-serif;fill:#172033} .title {font-size:30px;font-weight:700} .heading {font-size:24px;font-weight:700} .label {font-size:21px;font-weight:600} .body {font-size:20px;fill:#475569} .small {font-size:17px;fill:#475569} .code {font-family:Menlo,Consolas,monospace;font-size:15px;fill:#172033} .who {font-size:15px;font-weight:700;letter-spacing:1px}</style></defs>
+<rect width="1200" height="680" fill="white"/>
+<rect x="24" y="24" width="1152" height="632" rx="12" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+<text x="600" y="78" class="title" text-anchor="middle">Four states of the guard</text>
+<text x="600" y="114" class="body" text-anchor="middle">The agent decides on a shell command. Which column you are in decides what happens next.</text>
+
+<!-- OFF -->
+<rect x="64" y="150" width="256" height="376" rx="12" fill="#eef2f7" stroke="#b6c0cc" stroke-width="2"/>
+<text x="192" y="188" class="heading" text-anchor="middle">Off</text>
+<text x="192" y="214" class="code" text-anchor="middle">"disableAllHooks": true</text>
+<text x="192" y="236" class="small" text-anchor="middle">or not registered for this engine</text>
+<line x1="84" y1="256" x2="300" y2="256" stroke="#b6c0cc" stroke-width="2"/>
+<text x="84" y="286" class="who" fill="#64748b">COMMAND</text>
+<text x="84" y="308" class="code">pnpm db:reset</text>
+<text x="84" y="344" class="who" fill="#64748b">SCRIPT</text>
+<text x="84" y="366" class="small">never runs</text>
+<text x="84" y="402" class="who" fill="#64748b">THE SHELL</text>
+<text x="84" y="424" class="small">runs it. Tables are gone.</text>
+<text x="84" y="460" class="who" fill="#64748b">YOU SEE</text>
+<text x="84" y="482" class="small">nothing special. Where</text>
+<text x="84" y="504" class="small">lesson 3 left you.</text>
+
+<!-- ALLOWS -->
+<rect x="344" y="150" width="256" height="376" rx="12" fill="#d9f2e9" stroke="#429782" stroke-width="2"/>
+<text x="472" y="188" class="heading" text-anchor="middle">Allows</text>
+<text x="472" y="214" class="code" text-anchor="middle" fill="#429782">exit 0</text>
+<text x="472" y="236" class="small" text-anchor="middle">no rule matched</text>
+<line x1="364" y1="256" x2="580" y2="256" stroke="#429782" stroke-width="2"/>
+<text x="364" y="286" class="who" fill="#429782">COMMAND</text>
+<text x="364" y="308" class="code">pnpm db:migrate</text>
+<text x="364" y="344" class="who" fill="#429782">SCRIPT</text>
+<text x="364" y="366" class="small">writes nothing, exits 0</text>
+<text x="364" y="402" class="who" fill="#429782">THE SHELL</text>
+<text x="364" y="424" class="small">runs it. Output goes</text>
+<text x="364" y="446" class="small">back to the agent.</text>
+<text x="364" y="482" class="who" fill="#429782">YOU SEE</text>
+<text x="364" y="504" class="small">nothing. The hook is silent.</text>
+
+<!-- REFUSES -->
+<rect x="624" y="150" width="256" height="376" rx="12" fill="#fde8e6" stroke="#b4443c" stroke-width="3"/>
+<text x="752" y="188" class="heading" text-anchor="middle">Refuses</text>
+<text x="752" y="214" class="code" text-anchor="middle" fill="#b4443c">exit 2</text>
+<text x="752" y="236" class="small" text-anchor="middle">a rule matched</text>
+<line x1="644" y1="256" x2="860" y2="256" stroke="#b4443c" stroke-width="2"/>
+<text x="644" y="286" class="who" fill="#b4443c">COMMAND</text>
+<text x="644" y="308" class="code">pnpm db:reset</text>
+<text x="644" y="344" class="who" fill="#b4443c">SCRIPT</text>
+<text x="644" y="366" class="small">one sentence on stderr</text>
+<text x="644" y="402" class="who" fill="#b4443c">THE SHELL</text>
+<text x="644" y="424" class="small">never sees it. The sentence</text>
+<text x="644" y="446" class="small">reaches the agent instead.</text>
+<text x="644" y="482" class="who" fill="#b4443c">YOU SEE</text>
+<text x="644" y="504" class="small">the agent report it and ask.</text>
+
+<!-- BROKEN -->
+<rect x="904" y="150" width="256" height="376" rx="12" fill="#fff4d6" stroke="#c08a1d" stroke-width="2"/>
+<text x="1032" y="188" class="heading" text-anchor="middle">Broken</text>
+<text x="1032" y="214" class="code" text-anchor="middle" fill="#c08a1d">exit 1, crash, timeout</text>
+<text x="1032" y="236" class="small" text-anchor="middle">wrong path, syntax error</text>
+<line x1="924" y1="256" x2="1140" y2="256" stroke="#c08a1d" stroke-width="2"/>
+<text x="924" y="286" class="who" fill="#c08a1d">COMMAND</text>
+<text x="924" y="308" class="code">pnpm db:reset</text>
+<text x="924" y="344" class="who" fill="#c08a1d">SCRIPT</text>
+<text x="924" y="366" class="small">fails before it can answer</text>
+<text x="924" y="402" class="who" fill="#c08a1d">THE SHELL</text>
+<text x="924" y="424" class="small">runs it anyway. Fails open,</text>
+<text x="924" y="446" class="small">not closed.</text>
+<text x="924" y="482" class="who" fill="#c08a1d">YOU SEE</text>
+<text x="924" y="504" class="small">stderr as a warning.</text>
+
+<!-- note -->
+<rect x="64" y="556" width="1096" height="76" rx="12" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/>
+<text x="84" y="588" class="who" fill="#64748b">TELL THEM APART</text><text x="246" y="588" class="small">Ask for a reset (section 6). Ran quietly: Off. Blocked with the guard's sentence: Refuses. Ran with a warning: Broken.</text>
+<text x="84" y="616" class="who" fill="#64748b">BEFORE THAT</text><text x="214" y="616" class="small">the two echo lines in section 4 show Allows and Refuses without an agent, and catch Broken first.</text>
+</svg>

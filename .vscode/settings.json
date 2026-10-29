@@ -1,0 +1,8 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[prisma]": { "editor.defaultFormatter": "Prisma.prisma" },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "files.associations": { "turbo.json": "jsonc" }
+}

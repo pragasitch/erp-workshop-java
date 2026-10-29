@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+<title id="title">Where does this paragraph belong?</title><desc id="desc">A decision flow with three questions asked in order. Would the agent make a mistake on an ordinary task without this? Yes: AGENTS.md, always loaded. Is it only needed for one kind of task? Yes: a skill, loaded on demand. Can the agent get it from the code, the config or the tooling anyway? Yes: delete it. If every answer is no, it is background for humans and belongs in README.md, not in the agent's window.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#64748b"/></marker>
+<style>text {font-family:Arial,Helvetica,sans-serif;fill:#172033} .title {font-size:30px;font-weight:700} .heading {font-size:24px;font-weight:700} .label {font-size:21px;font-weight:600} .body {font-size:20px;fill:#475569} .small {font-size:18px;fill:#475569} .code {font-family:Menlo,Consolas,monospace;font-size:20px} .arrow {fill:none;stroke:#64748b;stroke-width:2.5;marker-end:url(#arrow)}</style></defs>
+<rect width="1200" height="820" fill="white"/>
+<rect x="24" y="24" width="1152" height="772" rx="12" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+<text x="600" y="78" class="title" text-anchor="middle">Where does this paragraph belong?</text><text x="600" y="114" class="body" text-anchor="middle">Ask the three questions in order. Stop at the first "yes".</text>
+<rect x="280" y="150" width="320" height="56" rx="28" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/><text x="440" y="185" class="label" text-anchor="middle">A paragraph of guidance</text>
+<path d="M440 206 V236" class="arrow"/>
+<rect x="80" y="246" width="720" height="96" rx="12" fill="#ffffff" stroke="#429782" stroke-width="2"/><text x="440" y="288" class="label" text-anchor="middle">1. Would the agent make a mistake</text><text x="440" y="318" class="label" text-anchor="middle">on an ordinary task without this?</text>
+<path d="M800 294 H860" class="arrow"/><text x="830" y="284" class="small" text-anchor="middle">yes</text>
+<rect x="870" y="256" width="266" height="76" rx="12" fill="#d9f2e9" stroke="#429782" stroke-width="2"/><text x="1003" y="290" class="code" text-anchor="middle">AGENTS.md</text><text x="1003" y="318" class="small" text-anchor="middle">always loaded</text>
+<path d="M440 342 V384" class="arrow"/><text x="458" y="368" class="small">no</text>
+<rect x="80" y="394" width="720" height="96" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/><text x="440" y="436" class="label" text-anchor="middle">2. Is it only needed for one kind of task?</text><text x="440" y="466" class="body" text-anchor="middle">a workflow, a template, a command recipe</text>
+<path d="M800 442 H860" class="arrow"/><text x="830" y="432" class="small" text-anchor="middle">yes</text>
+<rect x="870" y="404" width="266" height="76" rx="12" fill="#eef2f7" stroke="#94a3b8" stroke-width="2"/><text x="1003" y="438" class="code" text-anchor="middle">a skill</text><text x="1003" y="466" class="small" text-anchor="middle">loaded on demand</text>
+<path d="M440 490 V532" class="arrow"/><text x="458" y="516" class="small">no</text>
+<rect x="80" y="542" width="720" height="96" rx="12" fill="#ffffff" stroke="#c08a1d" stroke-width="2"/><text x="440" y="584" class="label" text-anchor="middle">3. Can the agent get it from the code,</text><text x="440" y="614" class="label" text-anchor="middle">the config or the tooling anyway?</text>
+<path d="M800 590 H860" class="arrow"/><text x="830" y="580" class="small" text-anchor="middle">yes</text>
+<rect x="870" y="552" width="266" height="76" rx="12" fill="#fff4d6" stroke="#c08a1d" stroke-width="2"/><text x="1003" y="586" class="code" text-anchor="middle">delete it</text><text x="1003" y="614" class="small" text-anchor="middle">pure cost</text>
+<path d="M440 638 V680" class="arrow"/><text x="458" y="664" class="small">no</text>
+<rect x="80" y="690" width="720" height="86" rx="12" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/><text x="440" y="726" class="label" text-anchor="middle">Then it is background, not guidance.</text><text x="440" y="756" class="body" text-anchor="middle">Keep it in README.md for humans, out of the agent's window.</text>
+</svg>

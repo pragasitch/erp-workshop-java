@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1080" viewBox="0 0 1200 1080" role="img" aria-labelledby="title desc">
+  <title id="title">Why teams choose a monorepo</title>
+  <desc id="desc">Five benefits: one commit updates database, contract, API and UI together; web and API import the same local contracts; packages share TypeScript, ESLint, Prettier and a lockfile; pnpm check runs lint, typecheck, tests and builds; renaming a contract field reveals affected uses in both apps through compiler errors.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#64748b"/></marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 30px; font-weight: 700; }
+      .heading { font-size: 24px; font-weight: 700; }
+      .body { font-size: 20px; fill: #475569; }
+      .label { font-size: 20px; font-weight: 600; text-anchor: middle; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 19px; text-anchor: middle; }
+      .line { fill: none; stroke: #64748b; stroke-width: 2.5; marker-end: url(#arrow); }
+      .number { font-size: 19px; font-weight: 700; fill: #267561; text-anchor: middle; }
+    </style>
+  </defs>
+  <rect width="1200" height="1080" fill="#ffffff"/>
+  <rect x="24" y="24" width="1152" height="1032" rx="20" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+  <text x="600" y="78" text-anchor="middle" class="title">Why teams choose a monorepo</text>
+  <text x="600" y="112" text-anchor="middle" class="body">Related changes, shared code, one place to work.</text>
+
+  <g aria-label="Atomic changes">
+    <rect x="56" y="144" width="1088" height="238" rx="14" fill="#f2faf8" stroke="#b7ddd3" stroke-width="2"/>
+    <circle cx="90" cy="182" r="18" fill="#d9f2e9"/><text x="90" y="189" class="number">1</text>
+    <text x="122" y="190" class="heading">Atomic changes</text>
+    <text x="84" y="224" class="body">One commit updates every layer of a feature together.</text>
+    <path d="M236 290 H964" fill="none" stroke="#429782" stroke-width="3"/>
+    <rect x="116" y="262" width="210" height="56" rx="10" fill="#ffedd0" stroke="#bf9458"/>
+    <rect x="368" y="262" width="210" height="56" rx="10" fill="#d9f2e9" stroke="#429782"/>
+    <rect x="620" y="262" width="210" height="56" rx="10" fill="#ffffff" stroke="#94a3b8"/>
+    <rect x="872" y="262" width="210" height="56" rx="10" fill="#ffffff" stroke="#94a3b8"/>
+    <text x="221" y="297" class="label">Database</text><text x="473" y="297" class="label">Contract</text>
+    <text x="725" y="297" class="label">API</text><text x="977" y="297" class="label">UI</text>
+    <path d="M116 330 V344 H1082 V330" fill="none" stroke="#429782" stroke-width="2"/>
+    <text x="600" y="369" class="code">one Git commit</text>
+  </g>
+
+  <g aria-label="Shared code">
+    <rect x="56" y="406" width="532" height="294" rx="14" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/>
+    <circle cx="90" cy="444" r="18" fill="#d9f2e9"/><text x="90" y="451" class="number">2</text>
+    <text x="122" y="452" class="heading">Shared code, directly</text>
+    <rect x="84" y="482" width="180" height="48" rx="9" fill="#eef2f7" stroke="#94a3b8"/>
+    <rect x="380" y="482" width="180" height="48" rx="9" fill="#eef2f7" stroke="#94a3b8"/>
+    <text x="174" y="513" class="code">web</text><text x="470" y="513" class="code">api</text>
+    <path d="M174 530 V550 H250 V570" class="line"/>
+    <path d="M470 530 V550 H394 V570" class="line"/>
+    <rect x="182" y="575" width="280" height="48" rx="9" fill="#d9f2e9" stroke="#429782"/>
+    <text x="322" y="606" class="code">@erp/contracts</text>
+    <text x="84" y="657" class="body">Both apps import the same local package.</text>
+    <text x="84" y="683" class="body">No publishing or version juggling.</text>
+  </g>
+
+  <g aria-label="One toolchain">
+    <rect x="612" y="406" width="532" height="294" rx="14" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/>
+    <circle cx="646" cy="444" r="18" fill="#d9f2e9"/><text x="646" y="451" class="number">3</text>
+    <text x="678" y="452" class="heading">One toolchain</text>
+    <rect x="640" y="482" width="476" height="72" rx="9" fill="#eef2f7" stroke="#94a3b8"/>
+    <text x="878" y="512" class="label">TypeScript · ESLint · Prettier</text>
+    <text x="878" y="540" class="code">one lockfile</text>
+    <path d="M878 554 V575 M700 596 V575 H1056 V596 M818 575 V596 M938 575 V596" fill="none" stroke="#64748b" stroke-width="2.5"/>
+    <g fill="#d9f2e9" stroke="#429782">
+      <rect x="650" y="596" width="100" height="32" rx="6"/><rect x="768" y="596" width="100" height="32" rx="6"/>
+      <rect x="888" y="596" width="100" height="32" rx="6"/><rect x="1006" y="596" width="100" height="32" rx="6"/>
+    </g>
+    <text x="878" y="670" text-anchor="middle" class="body">Shared configuration across packages.</text>
+  </g>
+
+  <g aria-label="One way to verify">
+    <rect x="56" y="724" width="532" height="300" rx="14" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/>
+    <circle cx="90" cy="762" r="18" fill="#d9f2e9"/><text x="90" y="769" class="number">4</text>
+    <text x="122" y="770" class="heading">One way to verify</text>
+    <rect x="192" y="800" width="260" height="52" rx="9" fill="#172033"/>
+    <text x="322" y="833" class="code" style="fill:#ffffff">pnpm check</text>
+    <path d="M322 852 V878" class="line"/>
+    <rect x="84" y="886" width="476" height="58" rx="9" fill="#d9f2e9" stroke="#429782"/>
+    <text x="322" y="922" class="label">Lint · Typecheck · Test · Build</text>
+    <text x="84" y="982" class="body">One command checks all packages.</text>
+  </g>
+
+  <g aria-label="Easy refactoring">
+    <rect x="612" y="724" width="532" height="300" rx="14" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/>
+    <circle cx="646" cy="762" r="18" fill="#d9f2e9"/><text x="646" y="769" class="number">5</text>
+    <text x="678" y="770" class="heading">Easy refactoring</text>
+    <rect x="670" y="800" width="416" height="52" rx="9" fill="#d9f2e9" stroke="#429782"/>
+    <text x="878" y="833" class="label">Rename a contract field</text>
+    <path d="M878 852 V867 H752 V886" class="line"/>
+    <path d="M878 867 H1004 V886" class="line"/>
+    <rect x="640" y="892" width="224" height="52" rx="9" fill="#ffedd0" stroke="#bf9458"/>
+    <rect x="892" y="892" width="224" height="52" rx="9" fill="#ffedd0" stroke="#bf9458"/>
+    <text x="752" y="925" class="label">web: type errors</text><text x="1004" y="925" class="label">api: type errors</text>
+    <text x="640" y="982" class="body">The compiler points to affected uses</text>
+    <text x="640" y="1008" class="body">in both apps so you know what to fix.</text>
+  </g>
+</svg>

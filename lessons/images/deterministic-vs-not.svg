@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1010" viewBox="0 0 1200 1010" xml:space="preserve" role="img" aria-labelledby="title desc">
+<title id="title">What is deterministic in the loop, and what isn't</title><desc id="desc">Two columns, three stages top to bottom, and a strip for the human underneath. The rule that sorts every step: run it twice on the same input; the same result is slate, a different result is amber. Left, deterministic, slate: same result every time, so it is trusted without being read. Right, non-deterministic, amber: a different result each run, so it is checked, not trusted. Stage one, before the run, the script: the frontier query with gh api, sorted and capped by --max; prisma migrate reset --force; git switch -c with a branch name from the title. Same GitHub and same main give the same tickets and the same branches. The amber side is empty: no model has started yet. Stage two, inside the run, one headless kiro-cli process. Slate: the walls the agent runs inside, implementer.json with allow and deny where deny wins, and the agent-guard hook with exit 0 or exit 2; the tools it calls, pnpm check, the test runner and the typecheck, and narrate and tee, which keep the stream as it came. A caption says: the agent decides when, the tool decides what. Amber: the judgement it was hired for. It reads the ticket and decides what it means, states the seams from the Seams line, picks the next failing test and writes the code, slices the work vertically or wrongly horizontally, writes the commit messages, the PR body and the Evidence, runs code-review as two sub-agents with two opinions, and ends with the PR URL or a NO PR line. Same ticket, two runs: two different diffs. Stage three, after the run, the script and then GitHub. Slate: git status --short, stop the pass if dirty; gh pr list --head, the only success test; CI, check and e2e on the pull request. The script reads the ground, not the conversation. Amber: lesson 8's AI review, another model reading the diff, advice and not a verdict, never approving or merging; run it again and the wording changes. A note says: every amber step sits between two slate ones; the randomness is where the judgement is, and everything around it is fixed. A box about retries: retry a slate step and the same input gives the same failure, so a retry changes nothing; retry an amber step and you get a different answer, the model reinterpreting a bad ticket, so the script never retries and you read the log. Underneath, the human, non-deterministic on purpose and never handed to the model: the Demo line, the diff against the criteria, ticking the boxes, fixing a bad ticket, and a colleague's merge.</desc>
+<defs><style>text {font-family:Arial,Helvetica,sans-serif;fill:#172033} .title {font-size:30px;font-weight:700} .label {font-size:20px;font-weight:600} .body {font-size:20px;fill:#475569} .small {font-size:16px;fill:#475569} .code {font-family:Menlo,Consolas,monospace;font-size:14px;fill:#172033} .who {font-size:15px;font-weight:700;letter-spacing:1px;fill:#475569} .head {font-size:17px;font-weight:700;letter-spacing:1px} .stage {font-size:14px;font-weight:700;letter-spacing:1px;fill:#64748b}</style></defs>
+<rect width="1200" height="1010" fill="white"/>
+<rect x="24" y="24" width="1152" height="962" rx="12" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+<text x="600" y="72" class="title" text-anchor="middle">What is deterministic in the loop, and what isn't</text>
+<text x="600" y="104" class="body" text-anchor="middle">Run it twice on the same input. The same result: slate. A different result: amber.</text>
+
+<!-- Column headers -->
+<text x="60" y="150" class="head" fill="#475569">DETERMINISTIC · same input, same output</text>
+<text x="60" y="174" class="small" font-style="italic">Same result every time, so it is trusted without being read.</text>
+<text x="620" y="150" class="head" fill="#b45309">NON-DETERMINISTIC · needs judgement</text>
+<text x="620" y="174" class="small" font-style="italic">A different result each run, so it is checked, not trusted.</text>
+
+<!-- Stage 1: before the run -->
+<text x="60" y="214" class="stage">1 · BEFORE THE RUN · the script</text>
+<rect x="60" y="224" width="520" height="120" rx="12" fill="#eef2f7" stroke="#64748b" stroke-width="2"/>
+<text x="80" y="254" class="code">gh api …/sub_issues<tspan x="290"># the frontier, sorted, --max</tspan></text>
+<text x="80" y="276" class="code">prisma migrate reset --force</text>
+<text x="80" y="298" class="code">git switch -c ticket/18-&lt;slug from the title&gt;</text>
+<text x="80" y="326" class="small">Same GitHub, same main: same tickets, same branches.</text>
+<rect x="620" y="224" width="520" height="120" rx="12" fill="#fffbf5" stroke="#d97706" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="880" y="278" class="label" text-anchor="middle">Nothing</text>
+<text x="880" y="304" class="small" text-anchor="middle">No model has started yet.</text>
+
+<!-- Stage 2: inside the run -->
+<text x="60" y="376" class="stage">2 · INSIDE THE RUN · one headless kiro-cli process</text>
+<rect x="60" y="386" width="520" height="230" rx="12" fill="#eef2f7" stroke="#64748b" stroke-width="2"/>
+<text x="80" y="416" class="label">The walls the agent runs inside</text>
+<text x="80" y="442" class="code">implementer.json<tspan x="250">allow / deny, deny wins</tspan></text>
+<text x="80" y="464" class="code">agent-guard.mjs<tspan x="250">exit 0 or exit 2</tspan></text>
+<text x="80" y="500" class="label">The tools it calls</text>
+<text x="80" y="526" class="code">pnpm check · the test runner · typecheck</text>
+<text x="80" y="548" class="code">narrate · tee<tspan x="250">the stream, as it came</tspan></text>
+<rect x="80" y="570" width="480" height="32" rx="8" fill="#ffffff" stroke="#64748b"/>
+<text x="320" y="592" class="small" text-anchor="middle" font-weight="700">The agent decides when. The tool decides what.</text>
+
+<rect x="620" y="386" width="520" height="230" rx="12" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+<text x="640" y="416" class="label">The judgement it was hired for</text>
+<text x="640" y="442" class="small">Reads the ticket, and decides what it means</text>
+<text x="640" y="464" class="small">States the seams from the Seams: line</text>
+<text x="640" y="486" class="small">Picks the next failing test, writes the code</text>
+<text x="640" y="508" class="small">Slices the work: vertical, or, wrongly, horizontal</text>
+<text x="640" y="530" class="small">Commit messages, the PR body, the Evidence</text>
+<text x="640" y="552" class="small">code-review: two sub-agents, two opinions</text>
+<text x="640" y="574" class="small">Ends with the PR URL, or NO PR: and why</text>
+<text x="640" y="602" class="small" font-style="italic">Same ticket, two runs: two different diffs.</text>
+
+<!-- Stage 3: after the run -->
+<text x="60" y="648" class="stage">3 · AFTER THE RUN · the script, then GitHub</text>
+<rect x="60" y="658" width="520" height="120" rx="12" fill="#eef2f7" stroke="#64748b" stroke-width="2"/>
+<text x="80" y="688" class="code">git status --short<tspan x="290"># dirty? stop the pass</tspan></text>
+<text x="80" y="710" class="code">gh pr list --head …<tspan x="290"># the only success test</tspan></text>
+<text x="80" y="732" class="code">CI<tspan x="290"># check and e2e on the PR</tspan></text>
+<text x="80" y="760" class="small">Reads the ground, not the conversation.</text>
+<rect x="620" y="658" width="520" height="120" rx="12" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+<text x="640" y="688" class="label">Lesson 8's AI review</text>
+<text x="640" y="714" class="small">Another model reads the diff. Advice, not a</text>
+<text x="640" y="736" class="small">verdict: it never approves, never merges.</text>
+<text x="640" y="760" class="small" font-style="italic">Run it again and the wording changes.</text>
+
+<!-- The walls note -->
+<text x="600" y="806" class="small" text-anchor="middle" font-style="italic">Every amber step sits between two slate ones. The randomness is where the judgement is; everything around it is fixed.</text>
+
+<!-- Retry box -->
+<rect x="60" y="822" width="1080" height="64" rx="10" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+<text x="80" y="848" class="small"><tspan font-weight="700" fill="#172033">Retry a slate step:</tspan> the same input gives the same failure, so a retry changes nothing.</text>
+<text x="80" y="872" class="small"><tspan font-weight="700" fill="#b45309">Retry an amber step:</tspan> a different answer, the model reinterpreting a bad ticket. So the script never retries; you read the log.</text>
+
+<!-- The human -->
+<text x="60" y="914" class="who">THE HUMAN · non-deterministic on purpose, never handed to the model</text>
+<rect x="60" y="924" width="1080" height="48" rx="10" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+<text x="80" y="954" class="small">The Demo: line · the diff against the criteria · tick the boxes · fix a bad ticket · a colleague merges</text>
+</svg>

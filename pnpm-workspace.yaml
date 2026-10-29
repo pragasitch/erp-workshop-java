@@ -1,0 +1,21 @@
+packages:
+  - apps/*
+  - packages/*
+
+# node_modules is shared between your machine and the Docker containers (bind mount).
+# Install native binaries (esbuild, rolldown, lightningcss, ...) for every platform
+# so the same install works on macOS, Windows/WSL and the Linux containers.
+supportedArchitectures:
+  os: [current, linux, darwin, win32]
+  cpu: [current, x64, arm64]
+  libc: [current, glibc]
+
+# Dependencies allowed to run install scripts (pnpm blocks them by default).
+allowBuilds:
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
+
+# The containers and your machine use different pnpm stores. Don't auto-reinstall
+# before every `pnpm run`/`pnpm exec` just because node_modules was installed on the other side.
+verifyDepsBeforeRun: false

@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+<title id="title">One turn of the implement loop</title><desc id="desc">The implement loop as a cycle of eight steps. Top row, left to right: query the frontier, the open tickets with no open blockers; create a branch by hand; run /implement-ticket with the ticket number in a fresh window, where the agent confirms seams, does red-green TDD, reviews and commits; the agent pushes and opens a pull request. Bottom row, right to left: you do the demo line, read the diff against the criteria, tick the boxes and wait for CI; merge, greyed and marked after class, after a reviewer who is not the author has looked; the ticket closes and the dependency gate opens, also greyed; clear the conversation. An arrow runs from clear back to the frontier query. A note in the middle says: state lives in git and on GitHub, never in the conversation.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#64748b"/></marker><marker id="arrow-muted" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#b6c0cc"/></marker>
+<style>text {font-family:Arial,Helvetica,sans-serif;fill:#172033} .title {font-size:30px;font-weight:700} .label {font-size:21px;font-weight:600} .body {font-size:20px;fill:#475569} .small {font-size:17px;fill:#475569} .code {font-family:Menlo,Consolas,monospace;font-size:15px;fill:#172033} .badge {font-size:16px;font-weight:700;fill:#ffffff} .arrow {fill:none;stroke:#64748b;stroke-width:2.5;marker-end:url(#arrow)} .arrow-muted {fill:none;stroke:#b6c0cc;stroke-width:2.5;stroke-dasharray:8 6;marker-end:url(#arrow-muted)} .muted {fill:#94a3b8} .who {font-size:15px;font-weight:700;letter-spacing:1px}</style></defs>
+<rect width="1200" height="700" fill="white"/>
+<rect x="24" y="24" width="1152" height="652" rx="12" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+<text x="600" y="78" class="title" text-anchor="middle">One turn of the implement loop</text>
+<text x="600" y="114" class="body" text-anchor="middle">The skill is the one amber box. Everything else is the loop around it, and most of that is yours.</text>
+
+<!-- top row -->
+<rect x="60" y="160" width="230" height="150" rx="12" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+<rect x="76" y="174" width="40" height="36" rx="8" fill="#64748b"/><text x="96" y="198" class="badge" text-anchor="middle">1</text>
+<text x="128" y="199" class="label">Frontier</text>
+<text x="76" y="232" class="small">Open tickets with no</text><text x="76" y="254" class="small">open blockers. Pick one.</text>
+<text x="76" y="290" class="code">gh api .../sub_issues</text>
+<path d="M290 235 H322" class="arrow"/>
+
+<rect x="330" y="160" width="230" height="150" rx="12" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+<rect x="346" y="174" width="40" height="36" rx="8" fill="#64748b"/><text x="366" y="198" class="badge" text-anchor="middle">2</text>
+<text x="398" y="199" class="label">Branch</text>
+<text x="346" y="232" class="small">By hand. The skill</text><text x="346" y="254" class="small">never creates one.</text>
+<text x="346" y="290" class="code">git switch -c ticket/16</text>
+<path d="M560 235 H592" class="arrow"/>
+
+<rect x="600" y="160" width="300" height="150" rx="12" fill="#fff4d6" stroke="#c08a1d" stroke-width="2"/>
+<rect x="616" y="174" width="40" height="36" rx="8" fill="#c08a1d"/><text x="636" y="198" class="badge" text-anchor="middle">3</text>
+<text x="668" y="199" class="label">Implement</text>
+<text x="616" y="232" class="small">Fresh window. Names the ticket,</text><text x="616" y="254" class="small">agrees seams, red-green, reviews,</text><text x="616" y="276" class="small">commits. Nothing else.</text>
+<text x="616" y="300" class="code">/implement-ticket #16</text>
+<path d="M900 235 H932" class="arrow"/>
+
+<rect x="940" y="160" width="200" height="150" rx="12" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+<rect x="956" y="174" width="40" height="36" rx="8" fill="#64748b"/><text x="976" y="198" class="badge" text-anchor="middle">4</text>
+<text x="1008" y="199" class="label">PR</text>
+<text x="956" y="232" class="small">Agent pushes and</text><text x="956" y="254" class="small">opens it. Closes #16</text><text x="956" y="276" class="small">in the body.</text>
+<text x="956" y="300" class="code">pr skill</text>
+
+<!-- down on the right -->
+<path d="M1040 310 V358" class="arrow"/>
+
+<!-- bottom row, right to left -->
+<rect x="900" y="366" width="240" height="160" rx="12" fill="#d9f2e9" stroke="#429782" stroke-width="2"/>
+<rect x="916" y="380" width="40" height="36" rx="8" fill="#429782"/><text x="936" y="404" class="badge" text-anchor="middle">5</text>
+<text x="968" y="405" class="label">Your turn</text>
+<text x="916" y="438" class="small">Do the Demo line. Read the</text><text x="916" y="460" class="small">diff against the criteria.</text><text x="916" y="482" class="small">Tick the boxes. CI green.</text>
+<text x="916" y="512" class="code">gh pr checks --watch</text>
+<path d="M900 446 H868" class="arrow"/>
+
+<rect x="640" y="366" width="220" height="160" rx="12" fill="#f1f4f8" stroke="#b6c0cc" stroke-width="2" stroke-dasharray="8 6"/>
+<rect x="656" y="380" width="40" height="36" rx="8" fill="#b6c0cc"/><text x="676" y="404" class="badge" text-anchor="middle">6</text>
+<text x="708" y="405" class="label muted">Merge</text>
+<text x="656" y="438" class="small muted">After a reviewer who</text><text x="656" y="460" class="small muted">is not the author</text><text x="656" y="482" class="small muted">has looked.</text>
+<rect x="656" y="494" width="124" height="24" rx="6" fill="#b6c0cc"/><text x="718" y="511" class="badge" text-anchor="middle">AFTER CLASS</text>
+<path d="M640 446 H608" class="arrow-muted"/>
+
+<rect x="380" y="366" width="220" height="160" rx="12" fill="#f1f4f8" stroke="#b6c0cc" stroke-width="2" stroke-dasharray="8 6"/>
+<rect x="396" y="380" width="40" height="36" rx="8" fill="#b6c0cc"/><text x="416" y="404" class="badge" text-anchor="middle">7</text>
+<text x="448" y="405" class="label muted">Gate opens</text>
+<text x="396" y="438" class="small muted">Ticket closes on merge.</text><text x="396" y="460" class="small muted">Tickets blocked by it</text><text x="396" y="482" class="small muted">join the frontier.</text>
+<text x="396" y="512" class="code muted">blocked_by: 1 → 0</text>
+<path d="M380 446 H348" class="arrow-muted"/>
+
+<rect x="60" y="366" width="280" height="160" rx="12" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+<rect x="76" y="380" width="40" height="36" rx="8" fill="#64748b"/><text x="96" y="404" class="badge" text-anchor="middle">8</text>
+<text x="128" y="405" class="label">Clear</text>
+<text x="76" y="438" class="small">Throw the conversation away.</text><text x="76" y="460" class="small">Nothing you need was only</text><text x="76" y="482" class="small">in it.</text>
+<text x="76" y="512" class="code">/clear</text>
+
+<!-- back up to the frontier -->
+<path d="M180 366 V318" class="arrow"/>
+
+<!-- who does what -->
+<text x="60" y="570" class="who" fill="#64748b">YOU</text><text x="110" y="570" class="small">1, 2, 5, 8 and the merge.</text>
+<text x="60" y="598" class="who" fill="#c08a1d">AGENT</text><text x="130" y="598" class="small">3 and 4, in one fresh window, then it stops.</text>
+<text x="60" y="626" class="who" fill="#94a3b8">PAUSED</text><text x="140" y="626" class="small">6 and 7. This lesson ends with the PR open and the frontier unchanged.</text>
+
+<rect x="700" y="556" width="440" height="84" rx="12" fill="#ffffff" stroke="#dce3eb" stroke-width="2"/>
+<text x="920" y="590" class="label" text-anchor="middle">State lives in git and on GitHub.</text>
+<text x="920" y="620" class="body" text-anchor="middle">Never in the conversation.</text>
+</svg>

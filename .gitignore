@@ -1,0 +1,41 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+.dev/
+*.tsbuildinfo
+**/src/generated/
+
+# turbo
+.turbo/
+
+# env
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# test
+coverage/
+
+# editors / OS
+.DS_Store
+.idea/
+*.swp
+
+# AI reviewer output (lessons/08)
+.ai-review/
+
+# headless implementer logs (lessons/09)
+.ai-runs/
+
+# Playwright output and saved sign-ins (lessons/10)
+apps/e2e/.auth/
+apps/e2e/test-results/
+apps/e2e/playwright-report/

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+<title id="title">What the agent loads when you open this repository</title><desc id="desc">Three layers, before and after this lesson. Your global config: before, personal MCP servers, plugins, hooks, skills and instructions that differ on every laptop; after step 1, fresh-install defaults with the old setup in a backup with RESTORE.md. The project config in git: before, AGENTS.md and skills that personal settings can add to; after step 2, AGENTS.md, skills and a settings file that switches off what the repository does not need, the same for everyone. Memory: before, notes the agent wrote in earlier sessions and loads silently; after step 3, off, with context moving between sessions in a handoff file you can read.</desc>
+<defs><style>text {font-family:Arial,Helvetica,sans-serif;fill:#172033} .title {font-size:30px;font-weight:700} .heading {font-size:24px;font-weight:700} .label {font-size:21px;font-weight:600} .body {font-size:20px;fill:#475569} .small {font-size:18px;fill:#475569} .code {font-family:Menlo,Consolas,monospace;font-size:18px;fill:#475569} .badge {font-size:16px;font-weight:700;fill:#ffffff}</style></defs>
+<rect width="1200" height="760" fill="white"/>
+<rect x="24" y="24" width="1152" height="712" rx="12" fill="#f8fafc" stroke="#dce3eb" stroke-width="2"/>
+<text x="600" y="78" class="title" text-anchor="middle">What the agent loads when you open this repository</text>
+<text x="600" y="114" class="body" text-anchor="middle">Three layers. Only the middle one is in git, so only the middle one is the same for everyone.</text>
+<text x="545" y="170" class="heading" text-anchor="middle">Before</text>
+<text x="945" y="170" class="heading" text-anchor="middle">After this lesson</text>
+<rect x="60" y="196" width="270" height="150" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<rect x="80" y="214" width="72" height="28" rx="14" fill="#64748b"/><text x="116" y="234" class="badge" text-anchor="middle">STEP 1</text>
+<text x="80" y="276" class="label">Your global config</text><text x="80" y="306" class="code">~/.claude ~/.codex</text><text x="80" y="330" class="code">~/.kiro ~/.agents</text>
+<rect x="350" y="196" width="390" height="150" rx="12" fill="#fff4d6" stroke="#c08a1d" stroke-width="2"/>
+<text x="370" y="240" class="body">Personal MCP servers, plugins,</text><text x="370" y="268" class="body">hooks, skills and instructions.</text><text x="370" y="310" class="label">Different on every laptop.</text>
+<rect x="760" y="196" width="380" height="150" rx="12" fill="#d9f2e9" stroke="#429782" stroke-width="2"/>
+<text x="780" y="240" class="body">Fresh-install defaults. The old</text><text x="780" y="268" class="body">setup waits in a backup folder</text><text x="780" y="296" class="body">with a RESTORE.md.</text><text x="780" y="330" class="label">Nothing personal loads.</text>
+<rect x="60" y="366" width="270" height="150" rx="12" fill="#ffffff" stroke="#429782" stroke-width="2"/>
+<rect x="80" y="384" width="72" height="28" rx="14" fill="#429782"/><text x="116" y="404" class="badge" text-anchor="middle">STEP 2</text>
+<text x="80" y="446" class="label">The project config</text><text x="80" y="476" class="small">committed to git</text>
+<rect x="350" y="366" width="390" height="150" rx="12" fill="#eef2f7" stroke="#94a3b8" stroke-width="2"/>
+<text x="370" y="410" class="body">AGENTS.md and skills. Shared,</text><text x="370" y="438" class="body">but anything in the global layer</text><text x="370" y="466" class="body">is added on top.</text>
+<rect x="760" y="366" width="380" height="150" rx="12" fill="#d9f2e9" stroke="#429782" stroke-width="2"/>
+<text x="780" y="410" class="body">AGENTS.md, skills, and a settings</text><text x="780" y="438" class="body">file that switches off what this</text><text x="780" y="466" class="body">codebase does not need.</text><text x="780" y="500" class="label">Same for everyone.</text>
+<rect x="60" y="536" width="270" height="150" rx="12" fill="#ffffff" stroke="#c08a1d" stroke-width="2"/>
+<rect x="80" y="554" width="72" height="28" rx="14" fill="#c08a1d"/><text x="116" y="574" class="badge" text-anchor="middle">STEP 3</text>
+<text x="80" y="616" class="label">Memory</text><text x="80" y="646" class="small">notes the agent wrote</text><text x="80" y="670" class="small">for itself</text>
+<rect x="350" y="536" width="390" height="150" rx="12" fill="#fff4d6" stroke="#c08a1d" stroke-width="2"/>
+<text x="370" y="580" class="body">Notes from earlier sessions,</text><text x="370" y="608" class="body">loaded silently at the start</text><text x="370" y="636" class="body">of the next one.</text><text x="370" y="670" class="label">Invisible and unreviewed.</text>
+<rect x="760" y="536" width="380" height="150" rx="12" fill="#d9f2e9" stroke="#429782" stroke-width="2"/>
+<text x="780" y="580" class="body">Off. Context moves between</text><text x="780" y="608" class="body">sessions in a handoff file in</text><text x="780" y="636" class="body">the repository.</text><text x="780" y="670" class="label">You can read it.</text>
+</svg>

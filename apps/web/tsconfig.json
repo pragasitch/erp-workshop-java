@@ -1,0 +1,10 @@
+{
+  "extends": "@erp/typescript-config/react-vite.json",
+  "compilerOptions": {
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}

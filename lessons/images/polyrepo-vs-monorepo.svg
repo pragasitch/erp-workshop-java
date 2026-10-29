@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
+  <title id="title">Polyrepo versus monorepo</title>
+  <desc id="desc">Polyrepo: erp-contracts repo publishes v1.4.0 to a package registry. erp-web repo installs v1.3.0 and erp-api repo installs v1.4.0. Monorepo: packages/contracts connects to apps/web and apps/api through workspace:*.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M 0 0 L 10 5 L 0 10 Z" fill="#64748b"/></marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; text-anchor: middle; }
+      .heading { font-size: 28px; font-weight: 700; }
+      .sub { font-size: 18px; fill: #475569; }
+      .node { font-size: 21px; font-weight: 600; }
+      .edge { font-size: 18px; fill: #475569; }
+      .line { fill: none; stroke: #64748b; stroke-width: 2.5; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1200" height="640" fill="#ffffff"/>
+  <rect x="24" y="24" width="564" height="592" rx="20" fill="#fffaf3" stroke="#e9d5b5" stroke-width="2"/>
+  <rect x="612" y="24" width="564" height="592" rx="20" fill="#f2faf8" stroke="#b7ddd3" stroke-width="2"/>
+  <text x="306" y="77" class="heading">Polyrepo</text>
+  <text x="306" y="108" class="sub">One repo per project</text>
+  <text x="894" y="77" class="heading">Monorepo</text>
+  <text x="894" y="108" class="sub">One repo, many packages</text>
+  <rect x="176" y="148" width="260" height="68" rx="12" fill="#ffffff" stroke="#bf9458" stroke-width="2"/>
+  <text x="306" y="190" class="node">erp-contracts repo</text>
+  <path d="M306 216 V306" class="line"/>
+  <rect x="322" y="243" width="140" height="30" rx="5" fill="#fffaf3"/>
+  <text x="392" y="265" class="edge">publish v1.4.0</text>
+  <rect x="176" y="316" width="260" height="68" rx="12" fill="#ffedd0" stroke="#bf9458" stroke-width="2"/>
+  <text x="306" y="358" class="node">Package registry</text>
+  <path d="M246 384 V422 H166 V496" class="line"/>
+  <path d="M366 384 V422 H446 V496" class="line"/>
+  <rect x="82" y="447" width="168" height="30" rx="5" fill="#fffaf3"/>
+  <text x="166" y="469" class="edge">install v1.3.0</text>
+  <rect x="362" y="447" width="168" height="30" rx="5" fill="#fffaf3"/>
+  <text x="446" y="469" class="edge">install v1.4.0</text>
+  <rect x="56" y="506" width="220" height="68" rx="12" fill="#ffffff" stroke="#bf9458" stroke-width="2"/>
+  <text x="166" y="548" class="node">erp-web repo</text>
+  <rect x="336" y="506" width="220" height="68" rx="12" fill="#ffffff" stroke="#bf9458" stroke-width="2"/>
+  <text x="446" y="548" class="node">erp-api repo</text>
+  <rect x="754" y="148" width="280" height="68" rx="12" fill="#d9f2e9" stroke="#429782" stroke-width="2"/>
+  <text x="894" y="190" class="node">packages/contracts</text>
+  <path d="M834 216 V350 H754 V496" class="line"/>
+  <path d="M954 216 V350 H1034 V496" class="line"/>
+  <rect x="670" y="405" width="168" height="32" rx="5" fill="#f2faf8"/>
+  <text x="754" y="428" class="edge">workspace:*</text>
+  <rect x="950" y="405" width="168" height="32" rx="5" fill="#f2faf8"/>
+  <text x="1034" y="428" class="edge">workspace:*</text>
+  <rect x="644" y="506" width="220" height="68" rx="12" fill="#ffffff" stroke="#429782" stroke-width="2"/>
+  <text x="754" y="548" class="node">apps/web</text>
+  <rect x="924" y="506" width="220" height="68" rx="12" fill="#ffffff" stroke="#429782" stroke-width="2"/>
+  <text x="1034" y="548" class="node">apps/api</text>
+</svg>

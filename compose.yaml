@@ -1,0 +1,92 @@
+# Local development stack. Usage:
+#   docker compose up            # postgres + api + web
+#   docker compose --profile tools up studio   # Prisma Studio on http://localhost:5555
+#
+# Every value below has a default; override any of them in a .env file (see .env.example).
+
+name: erp-workshop
+
+x-node-env: &node-env
+  DATABASE_URL: postgresql://${POSTGRES_USER:-erp}:${POSTGRES_PASSWORD:-erp}@postgres:5432/${POSTGRES_DB:-erp}
+  # File watching through bind mounts is unreliable on some hosts (e.g. Windows): poll instead.
+  WATCH_POLLING: 'true'
+  CHOKIDAR_USEPOLLING: 'true'
+  TSC_WATCHFILE: DynamicPriorityPolling
+  TSC_WATCHDIRECTORY: DynamicPriorityPolling
+
+x-node-app: &node-app
+  build:
+    context: .
+    dockerfile: docker/dev.Dockerfile
+  image: erp-workshop-dev
+  working_dir: /workspace
+  volumes:
+    - .:/workspace
+    - pnpm-store:/pnpm/store
+  environment:
+    <<: *node-env
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-erp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-erp}
+      POSTGRES_DB: ${POSTGRES_DB:-erp}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  # One-shot: install dependencies and build the shared packages, then exit.
+  install:
+    <<: *node-app
+    command: sh -c "pnpm install && pnpm turbo run build --filter='./packages/*' --ui=stream"
+
+  api:
+    <<: *node-app
+    # Apply pending migrations, (re)create the demo users, then run NestJS + watchers for the shared packages it uses.
+    command: sh -c "pnpm db:deploy && pnpm db:seed && pnpm turbo run dev --filter=@erp/api... --ui=stream"
+    ports:
+      - '${API_PORT:-3000}:3000'
+    environment:
+      <<: *node-env
+      PORT: '3000'
+    depends_on:
+      install:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+
+  web:
+    <<: *node-app
+    # --only: the api service already runs the watchers for the shared packages.
+    command: pnpm turbo run dev --filter=@erp/web --only --ui=stream
+    ports:
+      - '${WEB_PORT:-5173}:5173'
+    environment:
+      <<: *node-env
+      HOST: 0.0.0.0
+      API_PROXY_TARGET: http://api:3000
+    depends_on:
+      install:
+        condition: service_completed_successfully
+
+  studio:
+    <<: *node-app
+    profiles: [tools]
+    command: sh -c "node docker/studio-proxy.mjs & pnpm --filter @erp/database exec prisma studio --port 5556 --browser none"
+    ports:
+      - '5555:5555'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  pnpm-store:

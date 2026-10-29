@@ -1,0 +1,45 @@
+{
+  "name": "@erp/database",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "dev:generate": "prisma generate --watch",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:reset": "prisma migrate reset",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "~7.10.1",
+    "@prisma/client": "~7.10.1"
+  },
+  "devDependencies": {
+    "@erp/eslint-config": "workspace:*",
+    "@erp/typescript-config": "workspace:*",
+    "@types/node": "^24.0.0",
+    "eslint": "^10.13.0",
+    "prisma": "~7.10.1",
+    "tsup": "^9.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
+  }
+}

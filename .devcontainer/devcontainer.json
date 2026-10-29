@@ -1,0 +1,26 @@
+{
+  "name": "ERP Workshop",
+  "dockerComposeFile": ["../compose.yaml", "compose.devcontainer.yaml"],
+  "service": "devcontainer",
+  "runServices": ["postgres", "devcontainer"],
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "pnpm install && pnpm turbo run build --filter='./packages/*'",
+  "forwardPorts": [5173, 3000, 5432],
+  "portsAttributes": {
+    "5173": { "label": "web" },
+    "3000": { "label": "api" },
+    "5432": { "label": "postgres" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "Prisma.prisma",
+        "vitest.explorer"
+      ]
+    }
+  }
+}
