@@ -1,125 +1,99 @@
 ---
 name: add-feature
-description: Step-by-step recipe and file templates for adding a feature end to end (Prisma model, contract, NestJS module, React page, tests). Use when adding or changing a model, API route, or screen.
+description: Step-by-step recipe and file templates for adding a feature end to end (JPA entity + Flyway migration, Spring controller + DTO, regenerate the contract, React page, tests). Use when adding or changing a model, API route, or screen.
 ---
 
-# Add a feature (contract-first)
+# Add a feature (contract-first, Java owns the contract)
 
-Work in this order. Each step makes the next one type-check.
+Work in this order. The Java API defines the shape; the web app consumes a
+generated client.
 
-## 1. Data model (`packages/database`)
+## 1. Data model (`apps/api-java`)
 
-Add or change models in `prisma/schema.prisma`, then create the migration:
+Add a JPA entity and a Flyway migration.
 
-```bash
-pnpm db:migrate --name <describe_the_change>     # inside Docker: docker compose exec api pnpm db:migrate --name ...
+- Entity under `src/main/java/com/erp/api/<feature>/<Feature>.java`
+  (`@Entity`, `@Table(name = "<plural>")`, `@Id`). Generate the id in
+  `@PrePersist` (`UUID.randomUUID().toString()`), like `user/User.java`.
+- Repository: an interface extending `JpaRepository<<Feature>, String>`.
+- Migration: `src/main/resources/db/migration/V<n>__<describe_the_change>.sql`.
+  `ddl-auto` is `validate`, so the migration and the entity must match exactly.
+  Flyway runs on startup; a `CommandLineRunner` seeder (see `user/UserSeeder.java`)
+  creates demo rows and is re-runnable.
+
+## 2. Contract: controller + DTOs (`apps/api-java`)
+
+The API shape IS the Java code. Create DTOs as records and a controller:
+
+```java
+// customer/CustomerDto.java
+public record CustomerDto(
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED) String id,
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED) String name) {}
+
+// customer/CreateCustomerRequest.java
+public record CreateCustomerRequest(@NotBlank String name) {}
 ```
 
-- `migrate dev` does not run `prisma generate`. `pnpm dev` / `turbo` do it for you; run `pnpm db:generate` by hand only if types are stale.
-- The client is generated into `packages/database/src/generated` (gitignored). Import `PrismaClient` and model types from `@erp/database`, never from the generated path.
-- Seed data lives in `prisma/seed.ts` (`pnpm db:seed`). Use `upsert` so the seed is re-runnable.
+```java
+// customer/CustomerController.java
+@Tag(name = "customers")
+@RestController
+public class CustomerController {
+  private final CustomerRepository customers;
+  public CustomerController(CustomerRepository customers) { this.customers = customers; }
 
-## 2. Contract (`packages/contracts`)
+  @Operation(operationId = "listCustomers", summary = "List customers")
+  @GetMapping("/customers")
+  public List<CustomerDto> list() { ... }
 
-Create `src/<feature>.ts`:
-
-```ts
-import { oc } from '@orpc/contract';
-import * as z from 'zod';
-
-export const CustomerSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1),
-});
-export type Customer = z.infer<typeof CustomerSchema>;
-
-export const CreateCustomerSchema = CustomerSchema.omit({ id: true });
-
-export const customersContract = {
-  list: oc
-    .route({ method: 'GET', path: '/customers', summary: 'List customers', tags: ['Customers'] })
-    .output(z.array(CustomerSchema)),
-  create: oc
-    .route({ method: 'POST', path: '/customers', summary: 'Create a customer', tags: ['Customers'] })
-    .input(CreateCustomerSchema)
-    .output(CustomerSchema),
-};
-```
-
-Then in `src/index.ts`: `export * from './<feature>.js'` and add `<feature>: <feature>Contract` to the `contract` object.
-
-- Paths are relative to the API's `/api` prefix. Path params: `path: '/customers/{id}'` with `.input(z.object({ id: z.string() }))`.
-- All validation (lengths, enums, formats) goes here, not in the apps.
-- Optional: a `src/<feature>.test.ts` that exercises the schemas with `safeParse` (see `src/health.test.ts`).
-
-## 3. API (`apps/api`)
-
-Create `src/<feature>/<feature>.module.ts` and `src/<feature>/<feature>.controller.ts`:
-
-```ts
-import { Controller } from '@nestjs/common';
-import { contract } from '@erp/contracts';
-import { Implement, implement } from '@orpc/nest';
-import { PrismaService } from '../database/prisma.service.js';
-
-@Controller()
-export class CustomersController {
-  constructor(private readonly prisma: PrismaService) {}
-
-  @Implement(contract.customers.list)
-  list() {
-    return implement(contract.customers.list).handler(() => this.prisma.customer.findMany());
-  }
-
-  @Implement(contract.customers.create)
-  create() {
-    return implement(contract.customers.create).handler(({ input }) =>
-      this.prisma.customer.create({ data: input }),
-    );
-  }
+  @Operation(operationId = "createCustomer", summary = "Create a customer")
+  @PostMapping("/customers")
+  public CustomerDto create(@Valid @RequestBody CreateCustomerRequest body) { ... }
 }
 ```
 
-```ts
-import { Module } from '@nestjs/common';
-import { CustomersController } from './customers.controller.js';
+- Controller paths are relative to the `/api` context path; don't repeat it.
+- Mark every non-null DTO field `@Schema(requiredMode = REQUIRED)` so the
+  generated TypeScript type is not optional.
+- All input validation (lengths, formats) goes on the DTO with Bean Validation,
+  not in the web app.
+- Auth: every route already requires a signed-in user. Make a route public in
+  `SecurityConfig` with `permitAll()`, restrict with `hasRole("ADMIN")`, read the
+  user with `@AuthenticationPrincipal AppUserDetails principal`.
+- Reference: `health/HealthController.java`, `auth/AuthController.java`.
 
-@Module({ controllers: [CustomersController] })
-export class CustomersModule {}
+## 3. Regenerate the contract (`packages/contracts`)
+
+The TypeScript client is generated from the API's OpenAPI spec.
+
+```bash
+# start the API, then:
+curl -s http://localhost:3000/api/openapi > packages/contracts/openapi.json
+pnpm --filter @erp/contracts generate      # Orval: types + TanStack Query hooks
 ```
 
-Register the module in `src/app.module.ts`. `PrismaService` is global, no import needed.
-
-- `input` is already validated and typed by the contract. No DTOs, no `class-validator`.
-- For errors use `ORPCError` from `@orpc/server` (e.g. `throw new ORPCError('NOT_FOUND')`).
-- Auth: every route already requires a signed-in user. Imports come from `../auth/auth.decorators.js`:
-
-  ```ts
-  @Roles('ADMIN')                                   // optional: only these roles (else 403)
-  @Implement(contract.customers.create)
-  create(@CurrentUser() user: User) {               // User from @erp/contracts
-    return implement(contract.customers.create).handler(({ input }) =>
-      this.prisma.customer.create({ data: { ...input, createdById: user.id } }),
-    );
-  }
-  ```
-
-  Use `@Public()` only for routes that must work while signed out.
-- Reference: `src/health/health.controller.ts`.
+The hooks are named from the operationId: `listCustomers` -> `useListCustomers`,
+`createCustomer` -> `useCreateCustomer`.
 
 ## 4. Web (`apps/web`)
 
-- Read: `useQuery(orpc.customers.list.queryOptions())`, with input: `queryOptions({ input: { id } })`.
-- Write: `useMutation(orpc.customers.create.mutationOptions({ onSuccess: () => queryClient.invalidateQueries({ queryKey: orpc.customers.key() }) }))`.
-- Page component in `src/routes/<feature>.tsx`, registered in `src/router.tsx` as a child of `RootLayout` (which is inside `RequireAuth`, so the page is protected). Reusable pieces in `src/components/`.
-- The signed-in user: `const user = useCurrentUser()` from `@/lib/auth`. To hide UI by role: `user?.role === 'ADMIN'`. The API still enforces `@Roles`.
-- Need a shadcn/ui primitive that is not in `src/components/ui` yet? From `apps/web`: `pnpm dlx shadcn@latest add <component>`.
+- Read: `useListCustomers()` from `@erp/contracts`; the body is `response.data`.
+- Write: `useCreateCustomer()`; invalidate the list query on success.
+- Page component in `src/routes/<feature>.tsx`, registered in `src/router.tsx`
+  as a child of `RootLayout` (inside `RequireAuth`, so the page is protected).
+  Reusable pieces in `src/components/`.
+- The signed-in user: `const user = useCurrentUser()` from `@/lib/auth`. Hide UI
+  by role with `user?.role === 'ADMIN'`; the API still enforces the rule.
+- Need a shadcn/ui primitive not in `src/components/ui` yet? From `apps/web`:
+  `pnpm dlx shadcn@latest add <component>`.
 - Reference: `src/components/health-status.tsx`.
 
 ## 5. Tests and checks
 
-Write the api `*.spec.ts` and web `*.test.tsx` (see the `write-tests` skill), then run:
+Write the API JUnit tests and the web `*.test.tsx` (see the `write-tests` skill), then:
 
 ```bash
-pnpm check        # lint + typecheck + test + build, from the repo root
+pnpm check                                    # web + packages: lint, typecheck, test, build
+mvn -q -B -f apps/api-java/pom.xml verify     # the Java API
 ```

@@ -52,7 +52,7 @@ What CI cannot do is in the table:
 | Can fail. Can't stop anything                                     | Can refuse                                       |
 | Sees nothing a command did that isn't in the diff                 | Sees the command itself                          |
 
-`pnpm db:reset` drops every table in your development database and replays the migrations. It leaves no trace in a diff, CI never sees it, and the seed data you typed in during the demo is gone. `docker compose down -v` deletes the Postgres volume. `git push --force` rewrites a branch someone else may have pulled. `rm -rf` on a source folder removes files that may not be committed yet. None of these shows up in a pull request. All of them are one tool call away in lesson 7, and an agent that is stuck will reach for them.
+`mvn flyway:clean` drops every table in your development database; the API then re-migrates and re-seeds on its next boot. It leaves no trace in a diff, CI never sees it, and the seed data you typed in during the demo is gone. `docker compose down -v` deletes the Postgres volume. `git push --force` rewrites a branch someone else may have pulled. `rm -rf` on a source folder removes files that may not be committed yet. None of these shows up in a pull request. All of them are one tool call away in lesson 7, and an agent that is stuck will reach for them.
 
 A hook can refuse those. It cannot judge whether a diff is right, and it cannot tell a good migration from a bad one. The demo, the diff and the boxes in lesson 7 stay yours.
 
@@ -74,7 +74,7 @@ It reads the JSON the harness sends, finds the shell command in it, and tests th
 
 | Rule                  | Catches                                                             | Why it is on the list                          |
 | --------------------- | ------------------------------------------------------------------- | ---------------------------------------------- |
-| Database reset        | `prisma migrate reset`, `pnpm db:reset`                             | Drops every table and replays all migrations   |
+| Database reset        | `mvn flyway:clean`                                                  | Drops every table; the API re-migrates and re-seeds on next boot |
 | Docker volume removal | `docker compose down -v`, `docker volume rm`, `docker volume prune` | Deletes the Postgres volume and the data in it |
 | Force push            | `git push --force`, `git push -f`. Not `--force-with-lease`         | Rewrites history on a branch others pull from  |
 | Recursive delete      | `rm -r` on anything except `node_modules`, `dist` and `.turbo`      | Removes files that may not be in git           |
@@ -84,8 +84,8 @@ If a rule matches, the script writes one sentence to stderr and exits with `2`. 
 Try it without an agent:
 
 ```bash
-echo '{"tool_input":{"command":"pnpm db:reset"}}'   | node scripts/agent-guard.mjs; echo "exit $?"   # expect: the message, exit 2
-echo '{"tool_input":{"command":"pnpm db:migrate"}}' | node scripts/agent-guard.mjs; echo "exit $?"   # expect: nothing, exit 0
+echo '{"tool_input":{"command":"mvn flyway:clean"}}'  | node scripts/agent-guard.mjs; echo "exit $?"   # expect: the message, exit 2
+echo '{"tool_input":{"command":"mvn -f apps/api-java/pom.xml test"}}' | node scripts/agent-guard.mjs; echo "exit $?"   # expect: nothing, exit 0
 ```
 
 Two things it deliberately doesn't do. It isn't a sandbox: a reset wrapped in a script the agent wrote, or a new `package.json` alias someone adds later, gets past it. And the list is short on purpose, four rules you can read and explain. When a run in lesson 7 shows you a fifth command you wish it had refused, add a rule, commit it, and everyone has it.
@@ -154,15 +154,15 @@ Claude Code and Codex are in Appendix A.
 Start a fresh session and give the agent a reason to reset:
 
 ```
-Reset the development database with pnpm db:reset, then tell me what happened.
+Reset the development database with mvn flyway:clean, then tell me what happened.
 ```
 
-Expect the agent to report that the command was blocked, repeat the guard's reason, and ask you to run it. If it ran, the hook isn't registered for the engine you are on: ask the agent to show the file it wrote and the documentation page it used, and compare with section 5. If it quietly tried `prisma migrate reset` instead and that was blocked too, good, the second rule caught it.
+Expect the agent to report that the command was blocked, repeat the guard's reason, and ask you to run it. If it ran, the hook isn't registered for the engine you are on: ask the agent to show the file it wrote and the documentation page it used, and compare with section 5.
 
 Then:
 
 ```
-Run the migrations with pnpm db:migrate.
+Run the build and tests with mvn -f apps/api-java/pom.xml verify.
 ```
 
 Expect it to run. The guard refuses resets, not migrations, and lesson 7's first ticket needs one.
@@ -188,7 +188,7 @@ git push
 
 ## Optional: try it later
 
-This isn't part of the session. The second hook worth having in this repository protects **applied migrations**: once a file under `packages/database/prisma/migrations/` is committed, editing it breaks every database that already ran it. The same guard pattern applies, on the file-writing tools instead of the shell: read the path from the payload, check whether the file is already tracked (`git ls-files --error-unmatch <path>`), and exit `2` if it is. Write it as a second script, register it the same way, and ask the agent to "fix a typo in the first migration" to see it refuse.
+This isn't part of the session. The second hook worth having in this repository protects **applied migrations**: once a file under `apps/api-java/src/main/resources/db/migration/` is committed, editing it breaks every database that already ran it. The same guard pattern applies, on the file-writing tools instead of the shell: read the path from the payload, check whether the file is already tracked (`git ls-files`), and refuse the edit if it is.-files --error-unmatch <path>`), and exit `2` if it is. Write it as a second script, register it the same way, and ask the agent to "fix a typo in the first migration" to see it refuse.
 
 ---
 

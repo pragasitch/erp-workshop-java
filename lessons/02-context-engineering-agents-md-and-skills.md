@@ -23,7 +23,7 @@ Two kinds of content share that space:
 
 **Fixed cost, paid every session.** Before you type anything, the agent has already loaded its own system prompt, the definition of every tool it can call, your instruction files (`AGENTS.md` / `CLAUDE.md` at the root, plus the ones for the apps it is editing), and one line of name and description per installed skill. You pay this whether the task is a typo fix or a new module.
 
-**Variable cost, growing with the session.** Every file the agent reads, every build log, every test run, every message in both directions stays in the window until the session is cleared or compacted. A single `pnpm check` with a failing build can add thousands of tokens. Reading a generated Prisma client "just to be sure" can add tens of thousands.
+**Variable cost, growing with the session.** Every file the agent reads, every build log, every test run, every message in both directions stays in the window until the session is cleared or compacted. A single `pnpm check` with a failing build can add thousands of tokens. Reading a large generated file "just to be sure" can add tens of thousands.
 
 In Claude Code you can see the breakdown at any time with `/context`. The useful question is not "how big is the window?" but "how much of it is doing useful work right now?".
 
@@ -76,14 +76,14 @@ The way out is to separate two things that usually get mixed in one file.
 
 **Rules** are short, apply to almost every task, and cause a mistake if the agent does not know them. "Relative imports need `.js`." "Never hand-write API types; derive them from the contract." "Run `pnpm check` before you finish." These belong in `AGENTS.md`, where the agent sees them every time.
 
-**Recipes** are long, apply to one kind of task, and are useless on every other task. The six-step workflow for adding a feature. The template for a NestJS controller spec. The Docker command for running a migration. These belong in **skills**.
+**Recipes** are long, apply to one kind of task, and are useless on every other task. The six-step workflow for adding a feature. The template for a Spring controller test. The Docker command for running the stack. These belong in **skills**.
 
 A skill is a folder with a `SKILL.md` file that starts with a name and a one-line description:
 
 ```markdown
 ---
 name: add-feature
-description: Step-by-step recipe and file templates for adding a feature end to end (Prisma model, contract, NestJS module, React page, tests). Use when adding or changing a model, API route, or screen.
+description: Step-by-step recipe and file templates for adding a feature end to end (JPA entity, Flyway migration, Spring controller + DTO, React page, tests). Use when adding or changing a model, API route, or screen.
 ---
 
 # Add a feature (contract-first)
@@ -135,9 +135,9 @@ Token counts are estimates (four characters per token). The point is the shape, 
 | Was in               | Content                                                                      | Now in          |
 | -------------------- | ---------------------------------------------------------------------------- | --------------- |
 | root `AGENTS.md`     | the six-step "add a feature" workflow                                        | `add-feature`   |
-| root `AGENTS.md`     | Prisma 7 generate/migrate notes, Docker exec, `--filter`, bind mount gotchas | `repo-commands` |
-| root `AGENTS.md`     | env var registration steps (`.env.example`, `globalPassThroughEnv`)          | `repo-commands` |
-| `apps/api/AGENTS.md` | the Tests section (`Test.createTestingModule`, `call()`)                     | `write-tests`   |
+| root `AGENTS.md`     | Flyway migration/seed/reset notes, Docker, `--filter`, Maven gotchas         | `repo-commands` |
+| root `AGENTS.md`     | env var registration steps (`.env.example`)                                  | `repo-commands` |
+| `apps/api-java/AGENTS.md` | the Tests section (`@SpringBootTest`, `MockMvc`)                        | `write-tests`   |
 | `apps/web/AGENTS.md` | the Tests section (`QueryClientProvider`, `vi.stubGlobal`)                   | `write-tests`   |
 | `apps/web/AGENTS.md` | how to add a shadcn/ui component                                             | `add-feature`   |
 
@@ -154,8 +154,8 @@ Each of these got _longer_ in its new home. The test section used to be four bul
 
 Everything left in the three files passes the first question: the agent would do the wrong thing on an ordinary task without it.
 
-- `AGENTS.md` (34 lines): the package map, contract-first, ESM imports, where env vars are validated, "run `pnpm check` before finishing", and a list of the skills with one line each on when to use them.
-- `apps/api/AGENTS.md` (10 lines): one module per feature, `@Implement` the contract, no DTOs, `PrismaService` only, don't repeat the `/api` prefix.
+- `AGENTS.md`: the package map, contract-first (Java owns it), import rules, where env vars live, "run `pnpm check` and `mvn verify` before finishing", and a list of the skills with one line each on when to use them.
+- `apps/api-java/AGENTS.md`: one package per feature, `@RestController` under `/api`, DTOs as records, JPA repositories only, Spring Security for auth.
 - `apps/web/AGENTS.md` (9 lines): typed client only, same-origin `/api`, where routes and components live, Tailwind with `cn()`.
 
 Notice that the root file still ends with a **skill list**. The agent gets skill descriptions from the tool anyway, but a human reading `AGENTS.md` should also learn that the recipes exist and where they are.
@@ -193,7 +193,7 @@ Instruction files are the lever this lesson is about, but the dumb zone theory p
 - **Start fresh between tasks.** `/clear` in Claude Code throws away the conversation and keeps the fixed cost. A new task rarely benefits from the previous task's build logs.
 - **Compact on purpose.** Before the window fills, have the agent write what it has learned into a short plan or progress file, then clear and continue from that file. HumanLayer calls this "intentional compaction". A good commit message is a form of it.
 - **Delegate exploration.** Searching a codebase produces a lot of low-value tokens. A sub-agent can read twenty files and return three sentences, and only the three sentences enter your window. Lesson 6 is about this.
-- **Keep tool output terse.** `pnpm check` with `--filter=@erp/api` produces a fraction of the log of a full run. Turborepo's cache does the same for packages you did not touch.
+- **Keep tool output terse.** `pnpm check` with `--filter=@erp/web` produces a fraction of the log of a full run. Turborepo's cache does the same for packages you did not touch.
 - **Prefer deterministic checks.** A type error from the shared contract is a few lines the agent can act on. "Look through the code for mismatches" is an open-ended search that fills the window with files.
 - **Count your tools.** Every MCP server loads all of its tool definitions at startup. Five servers can cost more than every instruction file in this repository combined.
 

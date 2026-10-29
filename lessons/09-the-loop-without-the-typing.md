@@ -77,7 +77,7 @@ gh api "repos/{owner}/{repo}/issues/<spec number>/sub_issues" --paginate \
 
 In our run it printed three lines, `#18`, `#19` and `#20` **[Fill from a real run: the titles]**, and this lesson uses those numbers. Yours are different; lesson 7 section 3 says why. Open each ticket. Check it has `Covers:`, `Demo:` and `Seams:` lines, and that the `Seams:` line names seams you would say yes to, because this time you won't be asked. If one of them is wrong, fix it now, on GitHub, as lesson 7 section 7 says. If the frontier holds more than three, the script takes the three lowest numbers; `--max` changes that.
 
-One more thing to read before you run anything: which of these tickets touch the same files. Two of ours both added a Prisma model and both edited the contracts router. That is going to matter in section 7, and it is fine. Don't try to avoid it.
+One more thing to read before you run anything: which of these tickets touch the same files. Two of ours both added a JPA entity and both edited a controller. That is going to matter in section 7, and it is fine. Don't try to avoid it.
 
 ---
 
@@ -91,7 +91,7 @@ Lesson 7's run asked you for one thing, the seams, and lesson 7's loop asked you
 
 **Nobody says yes to the seams.** The `implement-ticket` skill says: before the first test, show the seams and wait. Lesson 7 said why: so you see that the `Seams:` line from lesson 4 is what makes the run test-first. Headless, the wait is a hang, and the `tdd` skill won't write a test at a seam nobody agreed. The answer was always on the ticket. The saved prompt says so: the `Seams:` line is the user's answer, state it and continue. That is why section 2 had you read the `Seams:` lines first. You are saying yes now, three times, in advance.
 
-**Each ticket starts from `main`, so the database has to.** Ticket `#18` runs `prisma migrate dev` and applies its migration. The script switches back to `main` and branches `#19`, whose checkout doesn't have `#18`'s migration folder, but the database still has `#18`'s row in `_prisma_migrations`. Prisma calls that drift, and in a non-interactive run `migrate dev` refuses rather than asking whether to reset. So before every ticket the script resets the database, replays the migrations on `main`, and seeds, which is the state lesson 7's run started from. Lesson 5's guard refuses that command to every agent in this repository. It doesn't refuse it to you, and the script is yours. Section 5 comes back to this.
+**Each ticket starts from `main`, so the database has to.** Ticket `#18` adds a Flyway migration that runs when the API boots and writes a row into `flyway_schema_history`. The script switches back to `main` and branches `#19`, whose checkout doesn't have `#18`'s migration file, but the database still has `#18`'s applied row. Flyway calls that a mismatch and refuses to migrate against it. So before every ticket the script runs `flyway:clean` to drop everything; the API then re-migrates and re-seeds on its next boot, which is the state lesson 7's run started from. Lesson 5's guard refuses that reset to every agent in this repository. It doesn't refuse it to you, and the script is yours. Section 5 comes back to this.
 
 | What lesson 7 had you do              | Where it lives now                                                       |
 | ------------------------------------- | ------------------------------------------------------------------------ |
@@ -120,7 +120,7 @@ Open `.kiro/agents/implementer.json` next to `reviewer.json` from lesson 8. The 
   "excludedTools": ["knowledge"],
   "resources": [
     "file://../../AGENTS.md",
-    "file://../../apps/api/AGENTS.md",
+    "file://../../apps/api-java/AGENTS.md",
     "file://../../apps/web/AGENTS.md",
     "skill://.kiro/skills/*/SKILL.md"
   ],
@@ -215,7 +215,7 @@ Open `scripts/implement-frontier.sh`. Read it top to bottom once; it is one scre
 
 **The loop** is two processes and the ground between them. The script sends the agent one thing, once: the arguments on the command line, a rulebook and a sentence. The agent sends the script one thing, continuously: its stdout, one event per line. Nothing ever goes the other way during a run; the script can't say yes, and section 3 said why it doesn't have to. When the process ends, the script doesn't ask the conversation what happened. It reads the checkout and GitHub.
 
-![Two lanes side by side with a channel between them, and a strip of shared ground underneath. Left, the script, a slate lane: bash, run from your shell, where no hook runs. Five steps. One, set the stage: prisma migrate reset --force, then git switch -c ticket/18-slug; the guard refuses the reset to the agent, the script is yours. Two, start one process: kiro-cli chat --v3 --no-interactive --output-format stream-json --agent implementer --effort high --trust-workspace "/implement-unattended #18". Three, read the stream: tee to .ai-runs/18.events.jsonl, narrate, tee to .ai-runs/18.log; the screen shows [execute] pnpm check, [edit] a path, and the agent's words. Four, read the ground, not the chat: git status --short, stop if dirty; gh pr list --head; the exit status is printed, not trusted. Five, back to main; the next ticket is a new process. Right, the agent, an amber lane: kiro-cli chat, a fresh process, nothing from the last ticket. What it is given: implementer.json with allow for commit, push and pr create and deny for merge, close, gh api and kiro-cli; implementer.md, the brief; the saved prompt, which reads the implement-ticket skill; and the agent-guard hook, the same guard as lesson 5. What it does with nobody to ask: states the seams from the ticket's Seams line, red, green, pnpm check, commit, code-review against main, fix, push, gh pr create, and ends with the PR URL or a NO PR line. What it can't do: an ask is a deny, a denial is final, it never resets, merges or ticks a box, can't start kiro-cli and can't edit its own rules. What it leaves behind: commits on the branch, a pull request on GitHub, and its words only in the stream. Between the lanes, three channels. In, once, as arguments, from the script to the agent: a rulebook and one sentence, nothing else is ever sent. Out, continuously, on stdout, from the agent to the script: one JSON event per line, tool_call with the command or path, tool_call_update with the status, agent_message_chunk with the words, runFinished; stderr carries startup info and denials to the log. Never, crossed out: an answer. The script can't say yes; the agent file said it in advance, and the guard says no inside the session. Underneath, the shared ground: the checkout, where the branch and the commits are; the database, reset by the script and migrated by the agent; GitHub, where the pull request, CI and the AI review are. The script trusts the ground, not the conversation. A red strip: the eighth rule, pnpm implement:frontier is refused to every agent; the script runs the reset the guard refuses the agent, so the guard refuses the script to the agent.](images/script-and-agent.svg)
+![Two lanes side by side with a channel between them, and a strip of shared ground underneath. Left, the script, a slate lane: bash, run from your shell, where no hook runs. Five steps. One, set the stage: mvn flyway:clean, then git switch -c ticket/18-slug; the guard refuses the reset to the agent, the script is yours. Two, start one process: kiro-cli chat --v3 --no-interactive --output-format stream-json --agent implementer --effort high --trust-workspace "/implement-unattended #18". Three, read the stream: tee to .ai-runs/18.events.jsonl, narrate, tee to .ai-runs/18.log; the screen shows [execute] pnpm check, [edit] a path, and the agent's words. Four, read the ground, not the chat: git status --short, stop if dirty; gh pr list --head; the exit status is printed, not trusted. Five, back to main; the next ticket is a new process. Right, the agent, an amber lane: kiro-cli chat, a fresh process, nothing from the last ticket. What it is given: implementer.json with allow for commit, push and pr create and deny for merge, close, gh api and kiro-cli; implementer.md, the brief; the saved prompt, which reads the implement-ticket skill; and the agent-guard hook, the same guard as lesson 5. What it does with nobody to ask: states the seams from the ticket's Seams line, red, green, pnpm check, commit, code-review against main, fix, push, gh pr create, and ends with the PR URL or a NO PR line. What it can't do: an ask is a deny, a denial is final, it never resets, merges or ticks a box, can't start kiro-cli and can't edit its own rules. What it leaves behind: commits on the branch, a pull request on GitHub, and its words only in the stream. Between the lanes, three channels. In, once, as arguments, from the script to the agent: a rulebook and one sentence, nothing else is ever sent. Out, continuously, on stdout, from the agent to the script: one JSON event per line, tool_call with the command or path, tool_call_update with the status, agent_message_chunk with the words, runFinished; stderr carries startup info and denials to the log. Never, crossed out: an answer. The script can't say yes; the agent file said it in advance, and the guard says no inside the session. Underneath, the shared ground: the checkout, where the branch and the commits are; the database, reset by the script and migrated by the agent; GitHub, where the pull request, CI and the AI review are. The script trusts the ground, not the conversation. A red strip: the eighth rule, pnpm implement:frontier is refused to every agent; the script runs the reset the guard refuses the agent, so the guard refuses the script to the agent.](images/script-and-agent.svg)
 
 The part to read against lesson 7:
 
@@ -224,7 +224,7 @@ for n in $frontier; do
   branch="ticket/$n-$slug"                                    # from the title, as you did by hand
   # skip if the branch exists: a previous run left it, and a human decides
 
-  pnpm --filter @erp/database exec prisma migrate reset --force   # section 3's fourth fact
+  mvn -q -B -f apps/api-java/pom.xml flyway:clean   # section 3's fourth fact
   git switch -c "$branch"
 
   kiro-cli chat --v3 --no-interactive --output-format stream-json --agent implementer \
@@ -240,7 +240,7 @@ done
 | Line                                              | Why                                                                                                                                                                                                                                                    |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Skip an existing branch                           | A branch for this ticket means a run already happened. Building again on top, or deleting it, is a decision, and the script doesn't make those                                                                                                         |
-| `prisma migrate reset --force`                    | Section 3's drift. `--force` skips Prisma's confirmation, which a script can't answer. It goes through `pnpm exec` rather than the `db:reset` alias because the alias doesn't pass flags through                                                       |
+| `mvn flyway:clean`                                | Section 3's mismatch. Flyway drops every table so the next boot re-migrates and re-seeds from `main`. The guard refuses this reset to agents; the script is run by a human                                                                              |
 | `--v3`, `--no-interactive`, `--agent implementer` | The engine that reads permission rules, headless mode, and the file from section 4. Same three as lesson 8's reviewer command                                                                                                                          |
 | `--trust-workspace`                               | Since 2.33 the V3 engine asks whether to trust a folder's hooks and agents the first time. Headless, that ask is a deny and the guard wouldn't load. The flag answers yes for this launch only, for a folder you are sitting in                        |
 | `/implement-unattended #$n`                       | The saved prompt, section 4. `${1}` becomes `#18`                                                                                                                                                                                                      |
@@ -258,7 +258,7 @@ At the end it prints one line per ticket: the PR URL, `no PR; see .ai-runs/19.lo
 Lesson 5 said the guard "isn't a sandbox: a reset wrapped in a script the agent wrote, or a new `package.json` alias someone adds later, gets past it." This lesson just added both. Prove it, with the guard's own test from lesson 5, before reading the rule:
 
 ```bash
-echo '{"tool_input":{"command":"pnpm db:reset"}}'          | node scripts/agent-guard.mjs; echo "exit $?"   # lesson 5's rule: the message, exit 2
+echo '{"tool_input":{"command":"mvn flyway:clean"}}'          | node scripts/agent-guard.mjs; echo "exit $?"   # lesson 5's rule: the message, exit 2
 echo '{"tool_input":{"command":"pnpm implement:frontier"}}' | node scripts/agent-guard.mjs; echo "exit $?"   # expect: the message, exit 2
 ```
 
@@ -287,14 +287,14 @@ Stay for the first ticket. It is lesson 7 section 4's run, printed to a terminal
 [read] .kiro/skills/implement-ticket/SKILL.md
 [execute] gh issue view 18 --json title,body
 Ticket #18: ...
-[execute] pnpm --filter @erp/api test -- orders.controller
-[edit] apps/api/src/orders/orders.controller.spec.ts
+[execute] mvn -q -B -f apps/api-java/pom.xml test -Dtest=OrderControllerTest
+[edit] apps/api-java/src/test/java/com/erp/api/order/OrderControllerTest.java
 [failed] Run Command  Output: ... Exit Code: 1
 ```
 
 `[read]`, `[edit]` and `[execute]` are the tool's kind; the rest of the line is the path, or the command. The command is the point: without it, headless Kiro prints `[tool] Run Command` and a column of `status: InProgress`, which is the same line for `gh issue view` and for `pnpm check`, and you can't tell a run that is working from one that is stuck. A `[failed]` line is a command that exited non-zero or was refused, with the first words of its output. In a red-green run, a `[failed]` after a test command is the red, not a problem. The shape is the same as lesson 7's:
 
-1. **The reset.** Prisma drops and replays the migrations and seeds, in the log, not on screen.
+1. **The reset.** Flyway drops every table; the API re-migrates and seeds on its next boot, in the log, not on screen.
 2. **The title.** The skill's first act is to fetch the ticket and state its title. If it isn't `#18`'s title, stop the script with `Ctrl+C`; lesson 7 said why this line exists.
 3. **The seams, stated, not asked.** The agent names the seams from the ticket and goes on. This is the saved prompt's first line doing its work, and the moment to notice that nobody was asked.
 4. **Red, then green.** Failing test, minimal code, repeat; typechecks and single test files often; `pnpm check` near the end. Horizontal slicing, all tests then all code, is as wrong here as it was in lesson 7, and now nobody is there to say so. If you see it, note it for section 8.
@@ -316,7 +316,7 @@ Lesson 7 section 5, per pull request. The script did none of it, on purpose. The
 ```bash
 gh pr list                                           # three PRs, from ticket/18-..., ticket/19-..., ticket/20-...
 git switch ticket/18-<slug>
-pnpm --filter @erp/database exec prisma migrate reset --force   # your database matches the last ticket, not this one
+mvn -q -B -f apps/api-java/pom.xml flyway:clean   # your database matches the last ticket, not this one
 pnpm dev                                             # if the stack from section 2 is only Postgres
 ```
 
@@ -339,7 +339,7 @@ Then hand all three to a colleague, one at a time, and let them merge as lesson 
 
 ## 8. When branches collide
 
-Three branches from the same `main`, two of which touched `schema.prisma`, the contracts router and `apps/api/src/app.module.ts`. The first merges cleanly. When your colleague goes to merge the second, GitHub says it can't: the branch conflicts with `main`, which now contains the first.
+Three branches from the same `main`, two of which touched a Flyway migration, a controller and a JPA entity. The first merges cleanly. When your colleague goes to merge the second, GitHub says it can't: the branch conflicts with `main`, which now contains the first.
 
 This is not a failure of the run. It is what parallel work costs, and the page for `implement-spec` lists it as that skill's main caveat too: branches that share a file collide at merge time, and worktrees or separate processes only postpone it. The fix is the same as it would be for a human's branch, and the agent can do it, in an interactive session, on the branch, with you watching:
 
@@ -355,7 +355,7 @@ migrations folder are where to look. Both migrations must apply, in order, on a 
 Run pnpm check, commit with #19, and push.
 ```
 
-Watch the migrations folder in particular. Two migrations created from the same `main` have timestamps that reflect when each run happened, so they apply in run order, and if both alter the same table the second one has to be right about what the first one did. `prisma migrate dev` on the merged branch will tell you, which is why the message says a fresh database: let the agent reset, no, let it ask you to reset, and reset.
+Watch the migrations folder in particular. Two Flyway migrations created from the same `main` get the next version number each, so if both alter the same table the second one has to be right about what the first one did. Flyway on the merged branch will fail if they conflict, which is why the message says a fresh database: let the agent reset, no, let it ask you to reset, and reset.
 
 The push is a `synchronize` event. Lesson 8's reviewer runs again on the merged branch, and its Merge danger paragraph is now about exactly this: two migrations, one base. Read it before your colleague does. In our run **[Fill from a real run: which two tickets collided, on which files, and whether the migrations needed reordering]**.
 
@@ -420,7 +420,7 @@ Read `18`, `19` and `20` as your ticket numbers.
 - `pnpm implement:frontier --dry-run` on a clean `main` prints your fork, your spec, and a frontier of at most three tickets with a branch name each, and builds nothing.
 - `echo '{"tool_input":{"command":"pnpm implement:frontier"}}' | node scripts/agent-guard.mjs` prints the implement loop message and exits 2.
 - `kiro-cli agent list` shows `implementer` as a workspace agent in `(v3 format)`, next to `erp` and `reviewer`, and `kiro-cli agent validate --path .kiro/agents/implementer.json` is silent.
-- `.ai-runs/18.log`, `19.log` and `20.log` exist, each starting with Prisma's reset output and containing, as `[execute]`, `[read]` and `[edit]` lines with the agent's words between them, the ticket's title, the seams stated, and either a pull request URL or a `NO PR:` line. Next to each, `18.events.jsonl` holds every event of the run, one JSON object per line. `git status --short` doesn't list them; `.ai-runs/` is in `.gitignore`.
+- `.ai-runs/18.log`, `19.log` and `20.log` exist, each starting with Flyway's clean output and containing, as `[execute]`, `[read]` and `[edit]` lines with the agent's words between them, the ticket's title, the seams stated, and either a pull request URL or a `NO PR:` line. Next to each, `18.events.jsonl` holds every event of the run, one JSON object per line. `git status --short` doesn't list the logs (they're gitignored).em; `.ai-runs/` is in `.gitignore`.
 - `gh pr list` shows one open pull request per ticket on **your fork**, each from `ticket/<n>-...` into `main`, each with `Closes #<n>` in the body, Summary, Evidence and Merge Danger sections, a green `check` from `CI`, and at least one `<!-- ai-review -->` review from `github-actions` whose footer names the branch's head commit.
 - `gh run list --workflow ai-review.yml` shows one `pull_request` run per PR that nobody started.
 - `git log ticket/18-... --oneline` shows several commits, each mentioning `#18`, with at least one after the review. `git log main -1` is unchanged from before the pass.
@@ -495,6 +495,6 @@ The same steps, per tool:
 - Kiro, [Subagents](https://kiro.dev/docs/custom-agents/subagents/) and [Managing workflows](https://kiro.dev/docs/workflows/manage/): "share the workspace environment", and "use separate worktrees or workspaces when runs can edit the same files".
 - Kiro, [Kiro Agent for GitHub](https://kiro.dev/docs/web/github/) and [Cloud sessions](https://kiro.dev/docs/cloud-sessions/): the hosted versions in section 11.
 - Git, [git-worktree](https://git-scm.com/docs/git-worktree): what section 10 creates.
-- Prisma, [Development and production: `migrate reset`](https://www.prisma.io/docs/orm/prisma-migrate/workflows/development-and-production): why the database is reset between tickets, and what `--force` skips.
+- Flyway, [Clean](https://documentation.red-gate.com/fd/clean-184127458.html) and [migration ordering](https://documentation.red-gate.com/fd/migrations-184127470.html): why the database is reset between tickets, and how two migrations from one base collide.
 - Claude Code, [Worktrees](https://code.claude.com/docs/en/worktrees), [Subagents](https://code.claude.com/docs/en/sub-agents) and [Headless](https://code.claude.com/docs/en/headless): the facts behind Appendix A.
 - Lesson 5 section 4, lesson 7 sections 5 and 7, lesson 8 sections 3 and 8: the guard this lesson extends, the human half it repeats, and the agent file it copies.

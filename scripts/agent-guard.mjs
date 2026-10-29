@@ -13,8 +13,8 @@ import { readFileSync } from 'node:fs';
 const rules = [
   {
     name: 'database reset',
-    test: /\bprisma\s+migrate\s+reset\b|\bdb:reset\b/,
-    why: 'drops every table in the dev database and replays all migrations',
+    test: /\bflyway:clean\b/,
+    why: 'drops every table in the dev database; the API re-migrates and re-seeds on its next boot',
   },
   {
     name: 'Docker volume removal',
@@ -51,7 +51,9 @@ const rules = [
   // The loop script resets the database and starts other agents. A human runs it. See lessons/09.
   {
     name: 'implement loop',
-    test: /\bimplement[:-]frontier\b/,
+    // Match only an attempt to RUN the loop (a runner or ./ prefix before it),
+    // not a plain path mention such as `git add scripts/implement-frontier.sh`.
+    test: /\b(pnpm|npm|npx|turbo|bash|sh|node|\.\/)\s[^\n]*implement[:-]frontier\b/,
     why: 'runs the implement loop over the frontier, which resets the database and starts agents; a human starts it from a terminal',
   },
   // Playwright's browser install can also install system packages with sudo and apt-get.

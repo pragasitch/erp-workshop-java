@@ -1,12 +1,12 @@
-# ERP Workshop: Full-stack TypeScript Monorepo
+# ERP Workshop: Java + TypeScript Monorepo
 
 The starter repository for the on-site **AI-assisted coding workshop**. We will build an ERP together on top of this scaffold:
 
 - **Frontend**: [Vite](https://vite.dev) + React 19, React Router, TanStack Query, Tailwind CSS v4, [shadcn/ui](https://ui.shadcn.com)
-- **Backend**: [NestJS](https://nestjs.com) 12
-- **Shared API contract**: [oRPC](https://orpc.dev) + [Zod](https://zod.dev). One typed contract used by both apps.
-- **Database**: PostgreSQL 18 + [Prisma](https://www.prisma.io) 7
-- **Monorepo**: [Turborepo](https://turborepo.dev) + [pnpm](https://pnpm.io) workspaces
+- **Backend**: [Spring Boot](https://spring.io/projects/spring-boot) 3 (JDK 21), built with [Maven](https://maven.apache.org)
+- **API contract**: defined by the Spring controllers; [springdoc](https://springdoc.org) emits the OpenAPI spec, and the TypeScript client is generated from it
+- **Database**: PostgreSQL 18, [Spring Data JPA](https://spring.io/projects/spring-data-jpa) + [Flyway](https://flywaydb.org) migrations
+- **Monorepo**: [Turborepo](https://turborepo.dev) + [pnpm](https://pnpm.io) workspaces for the web and shared packages
 - **Dev environment**: Docker Compose. **You only need Docker installed.**
 
 No ERP features yet. This is the clean starting point. Sign-in is already built in, so the workshop can go straight to the ERP.
@@ -30,7 +30,7 @@ Venue Wi-Fi is shared by everyone, so download the heavy stuff beforehand.
    ```bash
    git clone <your-fork-url> erp-workshop
    cd erp-workshop
-   docker compose build             # dev image (Node 24 + pnpm)
+   docker compose build             # dev image (Node 24 + pnpm, JDK 21 + Maven)
    docker compose pull postgres     # database image
    docker compose run --rm install  # installs node_modules + builds shared packages
    ```
@@ -59,63 +59,69 @@ Sign in with one of the demo accounts (they are also listed on the login page):
 | `admin@erp.local` | `password` | `ADMIN` |
 | `staff@erp.local` | `password` | `STAFF` |
 
-The home page then shows a **System status** card. **API ✅ / Database ✅** means the full chain works: React → typed client → Vite proxy → NestJS → Prisma → Postgres.
+The home page then shows a **System status** card. **API ✅ / Database ✅** means the full chain works: React → generated client → Vite proxy → Spring Boot → JPA → Postgres.
 
-Edit any file and it reloads automatically: React (HMR), NestJS (restart), and the shared packages (rebuild).
+Edit any file and it reloads automatically: React (HMR), the Spring Boot API (restart), and the shared packages (rebuild).
 
 Stop with `Ctrl+C`, or `docker compose down`. Add `-v` to also delete the database.
 
 ### Signing in
 
-Auth is deliberately minimal and only meant for the workshop. There is no sign-up or password reset: users come from `packages/database/prisma/seed.ts`, which runs every time the api starts.
+Auth is deliberately minimal and only meant for the workshop. There is no sign-up or password reset: users come from the seeder in `apps/api-java` (`user/UserSeeder.java`), which runs every time the API starts.
 
-- `POST /api/auth/login` checks the password and sets an httpOnly cookie holding the user id, signed with `AUTH_SECRET` and valid for 7 days. `auth.logout` clears it, and `auth.me` returns the current user.
-- Every API route requires a signed-in user unless it is marked `@Public()`. `@Roles('ADMIN')` limits a route to certain roles (`apps/api/src/auth`).
+- `POST /api/auth/login` checks the password and starts a server-side session (`JSESSIONID` cookie) via Spring Security. `/api/auth/logout` invalidates it, and `/api/auth/me` returns the current user.
+- Every API route requires a signed-in user unless it is made public in `SecurityConfig`. `hasRole("ADMIN")` limits a route to certain roles (`apps/api-java/.../auth`, `.../config/SecurityConfig.java`).
 - In the web app, every page under `RequireAuth` redirects to `/login` when nobody is signed in or any request returns 401 (`apps/web/src/lib/auth.ts`).
 
 ### Browse the database
 
 ```bash
-docker compose --profile tools up -d studio   # Prisma Studio on http://localhost:5555
+docker compose --profile tools up -d studio   # a database UI on http://localhost:5555
 ```
 
 ## 3. Everyday commands
 
-Run commands **inside the api container** so you don't need Node on your machine:
+The web and shared packages use pnpm/Turbo; the API is a Maven project.
 
 ```bash
-docker compose exec api pnpm db:migrate --name add_customers   # after editing schema.prisma
-docker compose exec api pnpm db:seed
-docker compose exec api pnpm db:reset                          # wipe + re-migrate + seed
-docker compose exec api pnpm check                             # lint + typecheck + test + build
-docker compose exec api pnpm add <pkg> --filter @erp/web       # add a dependency
+pnpm check                                     # web + packages: lint, typecheck, test, build
+mvn -q -B -f apps/api-java/pom.xml verify      # build and test the Java API
+mvn -q -B -f apps/api-java/pom.xml flyway:clean # wipe the database; the API re-migrates + seeds on next boot
+pnpm add <pkg> --filter @erp/web               # add a web/package dependency
 ```
 
-> Already have Node 24 + pnpm? You can run the same commands directly (`pnpm check`, `pnpm db:migrate ...`), and even run the apps on your machine with `pnpm dev:local`. It starts only Postgres in Docker, applies migrations, then runs `pnpm dev`. Don't run it at the same time as `docker compose up`, because they use the same ports (`docker compose stop api web` first).
+Add a new Flyway migration by dropping a `V<n>__<change>.sql` under
+`apps/api-java/src/main/resources/db/migration`; it runs on the next API boot.
+
+> Everything also runs inside Docker (`docker compose up`): the `api` service
+> builds and runs the Spring Boot app. Don't run `pnpm dev:local` at the same
+> time as `docker compose up`, because they use the same ports.
 
 ## 4. How the project is organised
 
 ```
 apps/
   web/          @erp/web        React app (talks only to /api, proxied by Vite)
-  api/          @erp/api        NestJS app (implements the contract)
+  api-java/     @erp/api-java   Spring Boot app (owns the API contract)
 packages/
-  contracts/    @erp/contracts  API contract: routes + Zod schemas (shared!)
-  database/     @erp/database   Prisma schema, migrations, seed, client
+  contracts/    @erp/contracts  TypeScript client, generated from the OpenAPI spec
   typescript-config/            shared tsconfig
   eslint-config/                shared ESLint config
 compose.yaml                    local dev stack
-turbo.json                      task pipeline (build → dev/test/lint/typecheck)
+turbo.json                      task pipeline for the web + packages
 ```
 
-**The contract is the heart of the monorepo.** `packages/contracts` describes every endpoint (method, path, input, output) with Zod:
+**Java owns the contract.** The Spring controllers and DTOs in `apps/api-java`
+define every endpoint; springdoc emits `packages/contracts/openapi.json`, and
+`packages/contracts` generates the TypeScript client and hooks from it:
 
-- `apps/api` implements it: `@Implement(contract.health.check)`
-- `apps/web` calls it with a fully typed client: `useQuery(orpc.health.check.queryOptions())`
+- `apps/api-java` defines it: `@GetMapping("/health")` returning a DTO
+- `apps/web` calls it with generated TanStack Query hooks: `useCheck()`
 
-Change the contract and TypeScript immediately shows you what to fix on both sides.
+Change a controller or DTO, regenerate the spec and the client, and TypeScript
+shows what to fix on the web side.
 
-See [AGENTS.md](AGENTS.md) for the repo conventions and `apps/api/AGENTS.md` / `apps/web/AGENTS.md` for the rules specific to each app. The step-by-step "add a feature" workflow, test recipes and command cheat-sheet live as skills in `.agents/skills/`. (Your AI assistant reads all of them too.)
+See [AGENTS.md](AGENTS.md) for the repo conventions and `apps/api-java/AGENTS.md` / `apps/web/AGENTS.md` for the rules specific to each app. The step-by-step "add a feature" workflow, test recipes and command cheat-sheet live as skills in `.agents/skills/`. (Your AI assistant reads all of them too.)
 
 ## 5. Troubleshooting
 
@@ -125,8 +131,8 @@ See [AGENTS.md](AGENTS.md) for the repo conventions and `apps/api/AGENTS.md` / `
 | Changes are not picked up                      | Windows: make sure the repo is inside WSL, not under `/mnt/c`. Then `docker compose restart api web`.                                                            |
 | Editor shows red squiggles everywhere          | `node_modules` is missing: `docker compose run --rm install`, then restart the TS server in your editor.                                                         |
 | Weird dependency errors after `git pull`       | `docker compose run --rm install`                                                                                                                                |
-| Can't sign in with the demo accounts           | Re-create them: `docker compose exec api pnpm db:seed`                                                                                                           |
-| Seed fails with `invalid input value for enum` | The database volume is shared by every clone of this repo and holds another checkout's migrations. `pnpm docker:clean` (deletes the database), then start again. |
+| Can't sign in with the demo accounts           | Re-create them: restart the API (the seeder runs on boot), or `mvn -q -B -f apps/api-java/pom.xml flyway:clean` then start again. |
+| Seed fails or schema looks wrong               | The database volume is shared by every clone of this repo and may hold another checkout's tables. `pnpm docker:clean` (deletes the database), then start again. |
 | Start completely fresh                         | `pnpm docker:clean`, delete `node_modules`, then `docker compose up`                                                                                             |
 
 ## Optional: Dev Container
