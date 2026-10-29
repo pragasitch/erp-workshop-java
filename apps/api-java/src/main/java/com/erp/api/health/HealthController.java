@@ -1,12 +1,14 @@
 package com.erp.api.health;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Instant;
-import java.util.Map;
 import javax.sql.DataSource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /** GET /api/health. Same JSON shape as the old NestJS health route. */
+@Tag(name = "health")
 @RestController
 public class HealthController {
 
@@ -16,8 +18,9 @@ public class HealthController {
         this.dataSource = dataSource;
     }
 
+    @Operation(operationId = "check", summary = "Check that the API and the database are reachable")
     @GetMapping("/health")
-    public Map<String, String> check() {
+    public HealthCheck check() {
         String database;
         try (var conn = dataSource.getConnection();
                 var stmt = conn.prepareStatement("SELECT 1")) {
@@ -26,9 +29,6 @@ public class HealthController {
         } catch (Exception e) {
             database = "error";
         }
-        return Map.of(
-                "api", "ok",
-                "database", database,
-                "timestamp", Instant.now().toString());
+        return new HealthCheck("ok", database, Instant.now().toString());
     }
 }

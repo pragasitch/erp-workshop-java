@@ -2,14 +2,13 @@ package com.erp.api.auth;
 
 import com.erp.api.auth.AppUserDetailsService.AppUserDetails;
 import com.erp.api.user.UserDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import java.util.Collections;
-import java.util.Map;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.http.ResponseEntity;import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+@Tag(name = "auth")
 @RestController
 public class AuthController {
 
@@ -37,6 +37,7 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
     }
 
+    @Operation(operationId = "login", summary = "Sign in with email and password")
     @PostMapping("/auth/login")
     public UserDto login(
             @Valid @RequestBody LoginRequest body,
@@ -60,6 +61,7 @@ public class AuthController {
         return UserDto.from(principal.getUser());
     }
 
+    @Operation(operationId = "logout", summary = "Sign out")
     @PostMapping("/auth/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -70,9 +72,10 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(operationId = "me", summary = "The signed-in user, or null")
     @GetMapping("/auth/me")
-    public Map<String, UserDto> me(@AuthenticationPrincipal AppUserDetails principal) {
+    public SessionResponse me(@AuthenticationPrincipal AppUserDetails principal) {
         UserDto user = principal == null ? null : UserDto.from(principal.getUser());
-        return Collections.singletonMap("user", user);
+        return new SessionResponse(user);
     }
 }
