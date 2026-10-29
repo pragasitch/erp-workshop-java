@@ -152,9 +152,9 @@ An AI coding agent works in a loop: read the code, make a change, run something 
 
 To build a real feature, an agent needs to know the database model, the API shape, the handler and the screen that calls it. In a polyrepo, half of that is in another repository the agent can't see, so it guesses. Here, one checkout contains:
 
-- `apps/api-java/src/main/resources/db/migration/`: the data model, as Flyway migrations
+- `apps/api/src/main/resources/db/migration/`: the data model, as Flyway migrations
 - `packages/contracts/openapi.json`: the exact API shape
-- `apps/api-java/src/main/java/`: the controllers and entities
+- `apps/api/src/main/java/`: the controllers and entities
 - `apps/web/src/`: the UI
 
 The agent reads the real contract instead of guessing at it.

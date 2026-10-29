@@ -22,19 +22,19 @@ risks from the earlier analysis no longer apply.
 
 ## Target stack
 
-| Layer | From | To |
-| --- | --- | --- |
-| Framework | NestJS 12 (ESM, Node >=24) | Spring Boot 3.x (JDK 21) |
-| Build | pnpm + Turbo + tsc | Maven |
-| Tests | Vitest (`*.spec.ts`) | JUnit 5 + `@SpringBootTest` / `MockMvc` |
-| Lint | ESLint | Checkstyle / PMD (optional) |
-| API routing | oRPC `@Implement(contract...)` | `@RestController`, paths under `/api` |
-| Validation | Zod schemas (from contract) | Bean Validation (`@Email`, `@NotBlank`, ...) |
-| Auth | custom `AuthGuard` + HMAC cookie | Spring Security, session cookie, BCrypt |
-| ORM | Prisma 7 + driver adapter | Spring Data JPA / Hibernate (or jOOQ) |
-| Migrations | Prisma migrate | Flyway |
-| OpenAPI | `@orpc/openapi` generator | springdoc-openapi |
-| Contract (TS) | hand-written oRPC + Zod | generated from OpenAPI spec |
+| Layer         | From                             | To                                           |
+| ------------- | -------------------------------- | -------------------------------------------- |
+| Framework     | NestJS 12 (ESM, Node >=24)       | Spring Boot 3.x (JDK 21)                     |
+| Build         | pnpm + Turbo + tsc               | Maven                                        |
+| Tests         | Vitest (`*.spec.ts`)             | JUnit 5 + `@SpringBootTest` / `MockMvc`      |
+| Lint          | ESLint                           | Checkstyle / PMD (optional)                  |
+| API routing   | oRPC `@Implement(contract...)`   | `@RestController`, paths under `/api`        |
+| Validation    | Zod schemas (from contract)      | Bean Validation (`@Email`, `@NotBlank`, ...) |
+| Auth          | custom `AuthGuard` + HMAC cookie | Spring Security, session cookie, BCrypt      |
+| ORM           | Prisma 7 + driver adapter        | Spring Data JPA / Hibernate (or jOOQ)        |
+| Migrations    | Prisma migrate                   | Flyway                                       |
+| OpenAPI       | `@orpc/openapi` generator        | springdoc-openapi                            |
+| Contract (TS) | hand-written oRPC + Zod          | generated from OpenAPI spec                  |
 
 ## What gets replaced
 
@@ -76,24 +76,24 @@ risks from the earlier analysis no longer apply.
 
 ## Repository / tooling impact
 
-| File / area | Change needed | Used by lesson |
-| --- | --- | --- |
-| `AGENTS.md` (root) | Rewrite backend description for Java stack | all |
-| `apps/api/AGENTS.md` | Rewrite rules for Spring Boot/JPA/springdoc | all |
-| `CLAUDE.md` | Follow AGENTS.md rewrite | all |
-| `apps/api/package.json` + configs | Replace with Maven `pom.xml` (or wrap Maven behind a thin `package.json` so Turbo can still call it) | all |
-| `packages/database` | Replace Prisma with JPA + Flyway, or keep Prisma only for migrations (decide) | all |
-| `packages/contracts` build | Generate from OpenAPI spec instead of hand-authored | 4, 7 |
-| `docker/dev.Dockerfile` | Add a JDK 21 stage for the api service | 1, 7, 9, 10 |
-| `compose.yaml` | Change api service build/run command to the Java app | 7, 9, 10 |
-| `.github/workflows/ci.yml` | Run Maven (compile/test/package) alongside/instead of `turbo` | 7, 8 |
-| `scripts/implement-frontier.sh` | Replace Prisma reset (`prisma migrate reset`) with Flyway/Maven reset; adjust preflight (currently requires `pnpm`, `docker`, `jq`) | 9 |
-| `.kiro/skills/implement`, `tdd`, `code-review` | Test cadence is TS (`tsc` + Vitest); retarget to `mvn compile` + JUnit | 7, 9 |
-| `.kiro/skills/implement-ticket` | Same retarget; references TS seams | 7, 9 |
-| `apps/e2e/playwright.config.ts` | `webServer` starts NestJS (`pnpm --filter @erp/api start`); change to Spring Boot start command | 10 |
-| `turbo.json` | api `build`/`dev`/`test` tasks assume Node/tsc; adjust or drop api from Turbo | all |
-| `docs/tors` spec step + "four seams" | Spec/tickets reference TS seams (contract schema, oRPC controller spec with stubbed Prisma, React component, Postgres integration); redefine for Java | 4 |
-| `lessons/04,07,09,10` | Narrative describes NestJS/oRPC/Prisma/pnpm; rewrite for Java flow | 4–10 |
+| File / area                                    | Change needed                                                                                                                                         | Used by lesson |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `AGENTS.md` (root)                             | Rewrite backend description for Java stack                                                                                                            | all            |
+| `apps/api/AGENTS.md`                           | Rewrite rules for Spring Boot/JPA/springdoc                                                                                                           | all            |
+| `CLAUDE.md`                                    | Follow AGENTS.md rewrite                                                                                                                              | all            |
+| `apps/api/package.json` + configs              | Replace with Maven `pom.xml` (or wrap Maven behind a thin `package.json` so Turbo can still call it)                                                  | all            |
+| `packages/database`                            | Replace Prisma with JPA + Flyway, or keep Prisma only for migrations (decide)                                                                         | all            |
+| `packages/contracts` build                     | Generate from OpenAPI spec instead of hand-authored                                                                                                   | 4, 7           |
+| `docker/dev.Dockerfile`                        | Add a JDK 21 stage for the api service                                                                                                                | 1, 7, 9, 10    |
+| `compose.yaml`                                 | Change api service build/run command to the Java app                                                                                                  | 7, 9, 10       |
+| `.github/workflows/ci.yml`                     | Run Maven (compile/test/package) alongside/instead of `turbo`                                                                                         | 7, 8           |
+| `scripts/implement-frontier.sh`                | Replace Prisma reset (`prisma migrate reset`) with Flyway/Maven reset; adjust preflight (currently requires `pnpm`, `docker`, `jq`)                   | 9              |
+| `.kiro/skills/implement`, `tdd`, `code-review` | Test cadence is TS (`tsc` + Vitest); retarget to `mvn compile` + JUnit                                                                                | 7, 9           |
+| `.kiro/skills/implement-ticket`                | Same retarget; references TS seams                                                                                                                    | 7, 9           |
+| `apps/e2e/playwright.config.ts`                | `webServer` starts NestJS (`pnpm --filter @erp/api start`); change to Spring Boot start command                                                       | 10             |
+| `turbo.json`                                   | api `build`/`dev`/`test` tasks assume Node/tsc; adjust or drop api from Turbo                                                                         | all            |
+| `docs/tors` spec step + "four seams"           | Spec/tickets reference TS seams (contract schema, oRPC controller spec with stubbed Prisma, React component, Postgres integration); redefine for Java | 4              |
+| `lessons/04,07,09,10`                          | Narrative describes NestJS/oRPC/Prisma/pnpm; rewrite for Java flow                                                                                    | 4–10           |
 
 ## Impact on lessons 4-10
 
@@ -106,8 +106,9 @@ risks from the earlier analysis no longer apply.
   Maven/JUnit/Flyway/Spring Boot.
 
 Key automation that breaks without changes:
+
 - `scripts/implement-frontier.sh` runs `pnpm --filter @erp/database exec prisma
-  migrate reset --force` — fails on a Java/Flyway backend.
+migrate reset --force` — fails on a Java/Flyway backend.
 - CI runs `pnpm turbo run lint typecheck test build` on Node — needs a Maven job.
 - e2e `webServer` runs `pnpm --filter @erp/api start` — needs a Spring Boot start.
 - `AGENTS.md` still describes NestJS/oRPC/Prisma, so agents keep generating that

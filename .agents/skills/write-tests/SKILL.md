@@ -10,7 +10,7 @@ are colocated with the code they cover (Java under `src/test/java`).
 
 | Package              | Framework      | Run only this                               |
 | -------------------- | -------------- | ------------------------------------------- |
-| `apps/api-java`      | JUnit 5 + MockMvc | `mvn -q -B -f apps/api-java/pom.xml test` |
+| `apps/api`      | JUnit 5 + MockMvc | `mvn -q -B -f apps/api/pom.xml test` |
 | `apps/web`           | Vitest `*.test.tsx` | `pnpm turbo run test --filter=@erp/web` |
 | `packages/contracts` | Vitest `*.test.ts`  | `pnpm turbo run test --filter=@erp/contracts` |
 

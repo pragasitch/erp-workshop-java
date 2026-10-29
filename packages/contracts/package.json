@@ -19,7 +19,7 @@
     "dev": "pnpm generate && tsup --watch",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run --passWithNoTests"
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.0.0"

@@ -8,7 +8,7 @@ description: Step-by-step recipe and file templates for adding a feature end to 
 Work in this order. The Java API defines the shape; the web app consumes a
 generated client.
 
-## 1. Data model (`apps/api-java`)
+## 1. Data model (`apps/api`)
 
 Add a JPA entity and a Flyway migration.
 
@@ -21,7 +21,7 @@ Add a JPA entity and a Flyway migration.
   Flyway runs on startup; a `CommandLineRunner` seeder (see `user/UserSeeder.java`)
   creates demo rows and is re-runnable.
 
-## 2. Contract: controller + DTOs (`apps/api-java`)
+## 2. Contract: controller + DTOs (`apps/api`)
 
 The API shape IS the Java code. Create DTOs as records and a controller:
 
@@ -95,5 +95,5 @@ Write the API JUnit tests and the web `*.test.tsx` (see the `write-tests` skill)
 
 ```bash
 pnpm check                                    # web + packages: lint, typecheck, test, build
-mvn -q -B -f apps/api-java/pom.xml verify     # the Java API
+mvn -q -B -f apps/api/pom.xml verify     # the Java API
 ```

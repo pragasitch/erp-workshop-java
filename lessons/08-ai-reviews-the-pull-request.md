@@ -97,7 +97,7 @@ Lesson 3 built the `erp` agent so the project, not your home directory, decides 
   "includePowers": false,
   "resources": [
     "file://../../AGENTS.md",
-    "file://../../apps/api-java/AGENTS.md",
+    "file://../../apps/api/AGENTS.md",
     "file://../../apps/web/AGENTS.md",
     "skill://.kiro/skills/review-pr/SKILL.md"
   ],

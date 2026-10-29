@@ -33,7 +33,7 @@ jobs:
 
       # The Spring Boot API: compile, unit tests, package.
       - name: Build and test the Java API
-        run: mvn -q -B -f apps/api-java/pom.xml verify
+        run: mvn -q -B -f apps/api/pom.xml verify
 
   # The Demo: lines, run by a machine. Playwright drives the built web app against the
   # Spring Boot API and a real Postgres, on every pull request. Unlike the AI review this

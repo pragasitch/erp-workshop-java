@@ -179,7 +179,7 @@ No interview this time. The skill synthesises the grill into a spec: problem sta
 The answer for this repository is the three seams the `write-tests` skill already describes, plus one new one:
 
 - The generated-contract check in `packages/contracts` (the client still builds against the committed OpenAPI spec).
-- Controller tests in `apps/api-java` with JUnit + MockMvc and a mocked repository.
+- Controller tests in `apps/api` with JUnit + MockMvc and a mocked repository.
 - React component tests in `apps/web` with a `QueryClient` and a stubbed `fetch`.
 - **New:** integration tests against the Docker Postgres for the posting paths. Idempotent receipts (GR-04), concurrent receipts (GR-05), the "never negative" rule (INV-03) and two sales racing for the same stock (INV-04, AC-07) cannot be proven with a mocked repository.
 

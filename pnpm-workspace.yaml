@@ -12,9 +12,7 @@ supportedArchitectures:
 
 # Dependencies allowed to run install scripts (pnpm blocks them by default).
 allowBuilds:
-  '@prisma/engines': true
   esbuild: true
-  prisma: true
 
 # The containers and your machine use different pnpm stores. Don't auto-reinstall
 # before every `pnpm run`/`pnpm exec` just because node_modules was installed on the other side.

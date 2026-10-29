@@ -37,7 +37,7 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'mvn -q -B -f ../api-java/pom.xml spring-boot:run',
+      command: 'mvn -q -B -f ../api/pom.xml spring-boot:run',
       url: `http://localhost:${apiPort}/api/health`,
       env: { PORT: apiPort },
       reuseExistingServer: !isCI,

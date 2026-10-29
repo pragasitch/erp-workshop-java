@@ -6,10 +6,10 @@
  * - Regenerate with `pnpm --filter @erp/contracts generate` after the spec changes.
  */
 
-export * from './generated/model';
-export * from './generated/auth/auth';
-export * from './generated/health/health';
-export { apiFetch, ApiError } from './fetcher';
+export * from './generated/model/index.js';
+export * from './generated/auth/auth.js';
+export * from './generated/health/health.js';
+export { apiFetch, ApiError } from './fetcher.js';
 
 // The old contract exposed the signed-in user as `User`. Keep that name.
-export type { UserDto as User } from './generated/model';
+export type { UserDto as User } from './generated/model/index.js';

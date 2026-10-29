@@ -1,6 +1,6 @@
-# AGENTS.md (apps/api-java)
+# AGENTS.md (apps/api)
 
-Rules for `@erp/api-java` (Spring Boot 3, JDK 21, Maven, Spring Security, Spring
+Rules for `@erp/api` (Spring Boot 3, JDK 21, Maven, Spring Security, Spring
 Data JPA, Flyway, springdoc). The [root AGENTS.md](../../AGENTS.md) still applies.
 
 - **One package per feature** under `src/main/java/com/erp/api/<feature>/`
@@ -27,4 +27,4 @@ Data JPA, Flyway, springdoc). The [root AGENTS.md](../../AGENTS.md) still applie
 - **The global prefix is `/api`** (servlet context path). Controller paths don't
   repeat it.
 - Tests are JUnit 5 under `src/test/java`, `@SpringBootTest` + `MockMvc`. See the
-  `write-tests` skill. Build and test with `mvn -q -B -f apps/api-java/pom.xml verify`.
+  `write-tests` skill. Build and test with `mvn -q -B -f apps/api/pom.xml verify`.

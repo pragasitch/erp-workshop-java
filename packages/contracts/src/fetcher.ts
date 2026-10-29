@@ -3,16 +3,12 @@
  * read `request.method` / `request.url` / `request.json()`), sends it same-origin
  * with the session cookie, and returns Orval's `{ status, data, headers }` wrapper.
  */
-export const apiFetch = async <T>(
-  url: string,
-  options?: RequestInit,
-): Promise<T> => {
+export const apiFetch = async <T>(url: string, options?: RequestInit): Promise<T> => {
   // Resolve relative `/api/...` against the current origin so `Request` can parse
   // it in jsdom/undici, which reject origin-less URLs. In the browser this is
   // the same-origin the Vite proxy forwards to the API.
-  const base =
-    typeof globalThis.location !== 'undefined' ? globalThis.location.origin : undefined;
-  const absolute = base ? new URL(url, base).toString() : url;
+  const origin = (globalThis as { location?: { origin: string } }).location?.origin;
+  const absolute = origin ? new URL(url, origin).toString() : url;
 
   const request = new Request(absolute, {
     ...options,

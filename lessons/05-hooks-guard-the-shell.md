@@ -72,12 +72,12 @@ The script is already in the repository: [`scripts/agent-guard.mjs`](../scripts/
 
 It reads the JSON the harness sends, finds the shell command in it, and tests the command against four rules:
 
-| Rule                  | Catches                                                             | Why it is on the list                          |
-| --------------------- | ------------------------------------------------------------------- | ---------------------------------------------- |
+| Rule                  | Catches                                                             | Why it is on the list                                            |
+| --------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | Database reset        | `mvn flyway:clean`                                                  | Drops every table; the API re-migrates and re-seeds on next boot |
-| Docker volume removal | `docker compose down -v`, `docker volume rm`, `docker volume prune` | Deletes the Postgres volume and the data in it |
-| Force push            | `git push --force`, `git push -f`. Not `--force-with-lease`         | Rewrites history on a branch others pull from  |
-| Recursive delete      | `rm -r` on anything except `node_modules`, `dist` and `.turbo`      | Removes files that may not be in git           |
+| Docker volume removal | `docker compose down -v`, `docker volume rm`, `docker volume prune` | Deletes the Postgres volume and the data in it                   |
+| Force push            | `git push --force`, `git push -f`. Not `--force-with-lease`         | Rewrites history on a branch others pull from                    |
+| Recursive delete      | `rm -r` on anything except `node_modules`, `dist` and `.turbo`      | Removes files that may not be in git                             |
 
 If a rule matches, the script writes one sentence to stderr and exits with `2`. The sentence names the rule, says what the command would have done, and tells the agent to stop and ask you instead of retrying or working around it. Anything else exits `0`. If the payload isn't a shell command at all, a file edit for example, the script lets it through, even if the file being written happens to contain the words `db:reset`.
 
@@ -85,7 +85,7 @@ Try it without an agent:
 
 ```bash
 echo '{"tool_input":{"command":"mvn flyway:clean"}}'  | node scripts/agent-guard.mjs; echo "exit $?"   # expect: the message, exit 2
-echo '{"tool_input":{"command":"mvn -f apps/api-java/pom.xml test"}}' | node scripts/agent-guard.mjs; echo "exit $?"   # expect: nothing, exit 0
+echo '{"tool_input":{"command":"mvn -f apps/api/pom.xml test"}}' | node scripts/agent-guard.mjs; echo "exit $?"   # expect: nothing, exit 0
 ```
 
 Two things it deliberately doesn't do. It isn't a sandbox: a reset wrapped in a script the agent wrote, or a new `package.json` alias someone adds later, gets past it. And the list is short on purpose, four rules you can read and explain. When a run in lesson 7 shows you a fifth command you wish it had refused, add a rule, commit it, and everyone has it.
@@ -162,7 +162,7 @@ Expect the agent to report that the command was blocked, repeat the guard's reas
 Then:
 
 ```
-Run the build and tests with mvn -f apps/api-java/pom.xml verify.
+Run the build and tests with mvn -f apps/api/pom.xml verify.
 ```
 
 Expect it to run. The guard refuses resets, not migrations, and lesson 7's first ticket needs one.
@@ -188,7 +188,7 @@ git push
 
 ## Optional: try it later
 
-This isn't part of the session. The second hook worth having in this repository protects **applied migrations**: once a file under `apps/api-java/src/main/resources/db/migration/` is committed, editing it breaks every database that already ran it. The same guard pattern applies, on the file-writing tools instead of the shell: read the path from the payload, check whether the file is already tracked (`git ls-files`), and refuse the edit if it is.-files --error-unmatch <path>`), and exit `2` if it is. Write it as a second script, register it the same way, and ask the agent to "fix a typo in the first migration" to see it refuse.
+This isn't part of the session. The second hook worth having in this repository protects **applied migrations**: once a file under `apps/api/src/main/resources/db/migration/` is committed, editing it breaks every database that already ran it. The same guard pattern applies, on the file-writing tools instead of the shell: read the path from the payload, check whether the file is already tracked (`git ls-files`), and refuse the edit if it is.-files --error-unmatch <path>`), and exit `2` if it is. Write it as a second script, register it the same way, and ask the agent to "fix a typo in the first migration" to see it refuse.
 
 ---
 

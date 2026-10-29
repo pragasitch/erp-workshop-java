@@ -1,7 +1,12 @@
 {
   "extends": "@erp/typescript-config/library.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    // This package is bundled by tsup and consumed as built output. Orval's
+    // generated client uses extensionless relative imports, so resolve like a
+    // bundler rather than nodenext.
+    "module": "preserve",
+    "moduleResolution": "bundler"
   },
   "include": ["src", "*.config.ts"]
 }

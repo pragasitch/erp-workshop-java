@@ -9,7 +9,7 @@
   "includePowers": false,
   "resources": [
     "file://../../AGENTS.md",
-    "file://../../apps/api-java/AGENTS.md",
+    "file://../../apps/api/AGENTS.md",
     "file://../../apps/web/AGENTS.md",
     "skill://.kiro/skills/*/SKILL.md"
   ],

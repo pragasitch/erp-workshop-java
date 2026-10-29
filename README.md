@@ -67,10 +67,10 @@ Stop with `Ctrl+C`, or `docker compose down`. Add `-v` to also delete the databa
 
 ### Signing in
 
-Auth is deliberately minimal and only meant for the workshop. There is no sign-up or password reset: users come from the seeder in `apps/api-java` (`user/UserSeeder.java`), which runs every time the API starts.
+Auth is deliberately minimal and only meant for the workshop. There is no sign-up or password reset: users come from the seeder in `apps/api` (`user/UserSeeder.java`), which runs every time the API starts.
 
 - `POST /api/auth/login` checks the password and starts a server-side session (`JSESSIONID` cookie) via Spring Security. `/api/auth/logout` invalidates it, and `/api/auth/me` returns the current user.
-- Every API route requires a signed-in user unless it is made public in `SecurityConfig`. `hasRole("ADMIN")` limits a route to certain roles (`apps/api-java/.../auth`, `.../config/SecurityConfig.java`).
+- Every API route requires a signed-in user unless it is made public in `SecurityConfig`. `hasRole("ADMIN")` limits a route to certain roles (`apps/api/.../auth`, `.../config/SecurityConfig.java`).
 - In the web app, every page under `RequireAuth` redirects to `/login` when nobody is signed in or any request returns 401 (`apps/web/src/lib/auth.ts`).
 
 ### Browse the database
@@ -85,13 +85,13 @@ The web and shared packages use pnpm/Turbo; the API is a Maven project.
 
 ```bash
 pnpm check                                     # web + packages: lint, typecheck, test, build
-mvn -q -B -f apps/api-java/pom.xml verify      # build and test the Java API
-mvn -q -B -f apps/api-java/pom.xml flyway:clean # wipe the database; the API re-migrates + seeds on next boot
+mvn -q -B -f apps/api/pom.xml verify      # build and test the Java API
+mvn -q -B -f apps/api/pom.xml flyway:clean # wipe the database; the API re-migrates + seeds on next boot
 pnpm add <pkg> --filter @erp/web               # add a web/package dependency
 ```
 
 Add a new Flyway migration by dropping a `V<n>__<change>.sql` under
-`apps/api-java/src/main/resources/db/migration`; it runs on the next API boot.
+`apps/api/src/main/resources/db/migration`; it runs on the next API boot.
 
 > Everything also runs inside Docker (`docker compose up`): the `api` service
 > builds and runs the Spring Boot app. Don't run `pnpm dev:local` at the same
@@ -102,7 +102,7 @@ Add a new Flyway migration by dropping a `V<n>__<change>.sql` under
 ```
 apps/
   web/          @erp/web        React app (talks only to /api, proxied by Vite)
-  api-java/     @erp/api-java   Spring Boot app (owns the API contract)
+  api/          @erp/api        Spring Boot app (owns the API contract)
 packages/
   contracts/    @erp/contracts  TypeScript client, generated from the OpenAPI spec
   typescript-config/            shared tsconfig
@@ -111,29 +111,29 @@ compose.yaml                    local dev stack
 turbo.json                      task pipeline for the web + packages
 ```
 
-**Java owns the contract.** The Spring controllers and DTOs in `apps/api-java`
+**Java owns the contract.** The Spring controllers and DTOs in `apps/api`
 define every endpoint; springdoc emits `packages/contracts/openapi.json`, and
 `packages/contracts` generates the TypeScript client and hooks from it:
 
-- `apps/api-java` defines it: `@GetMapping("/health")` returning a DTO
+- `apps/api` defines it: `@GetMapping("/health")` returning a DTO
 - `apps/web` calls it with generated TanStack Query hooks: `useCheck()`
 
 Change a controller or DTO, regenerate the spec and the client, and TypeScript
 shows what to fix on the web side.
 
-See [AGENTS.md](AGENTS.md) for the repo conventions and `apps/api-java/AGENTS.md` / `apps/web/AGENTS.md` for the rules specific to each app. The step-by-step "add a feature" workflow, test recipes and command cheat-sheet live as skills in `.agents/skills/`. (Your AI assistant reads all of them too.)
+See [AGENTS.md](AGENTS.md) for the repo conventions and `apps/api/AGENTS.md` / `apps/web/AGENTS.md` for the rules specific to each app. The step-by-step "add a feature" workflow, test recipes and command cheat-sheet live as skills in `.agents/skills/`. (Your AI assistant reads all of them too.)
 
 ## 5. Troubleshooting
 
-| Problem                                        | Fix                                                                                                                                                              |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `port is already allocated`                    | Something else uses the port. Copy `.env.example` to `.env` and change `WEB_PORT` / `API_PORT` / `POSTGRES_PORT`.                                                |
-| Changes are not picked up                      | Windows: make sure the repo is inside WSL, not under `/mnt/c`. Then `docker compose restart api web`.                                                            |
-| Editor shows red squiggles everywhere          | `node_modules` is missing: `docker compose run --rm install`, then restart the TS server in your editor.                                                         |
-| Weird dependency errors after `git pull`       | `docker compose run --rm install`                                                                                                                                |
-| Can't sign in with the demo accounts           | Re-create them: restart the API (the seeder runs on boot), or `mvn -q -B -f apps/api-java/pom.xml flyway:clean` then start again. |
-| Seed fails or schema looks wrong               | The database volume is shared by every clone of this repo and may hold another checkout's tables. `pnpm docker:clean` (deletes the database), then start again. |
-| Start completely fresh                         | `pnpm docker:clean`, delete `node_modules`, then `docker compose up`                                                                                             |
+| Problem                                  | Fix                                                                                                                                                             |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `port is already allocated`              | Something else uses the port. Copy `.env.example` to `.env` and change `WEB_PORT` / `API_PORT` / `POSTGRES_PORT`.                                               |
+| Changes are not picked up                | Windows: make sure the repo is inside WSL, not under `/mnt/c`. Then `docker compose restart api web`.                                                           |
+| Editor shows red squiggles everywhere    | `node_modules` is missing: `docker compose run --rm install`, then restart the TS server in your editor.                                                        |
+| Weird dependency errors after `git pull` | `docker compose run --rm install`                                                                                                                               |
+| Can't sign in with the demo accounts     | Re-create them: restart the API (the seeder runs on boot), or `mvn -q -B -f apps/api/pom.xml flyway:clean` then start again.                                    |
+| Seed fails or schema looks wrong         | The database volume is shared by every clone of this repo and may hold another checkout's tables. `pnpm docker:clean` (deletes the database), then start again. |
+| Start completely fresh                   | `pnpm docker:clean`, delete `node_modules`, then `docker compose up`                                                                                            |
 
 ## Optional: Dev Container
 

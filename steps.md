@@ -147,14 +147,14 @@ Pass: full check + e2e green; ready to start lesson 4 on the Java stack.
 
 ## Checkpoint summary
 
-| Step | Checkpoint commit |
-| --- | --- |
-| 1 | scaffold Spring Boot + Maven backend |
-| 2 | implement /api/health and point proxy at Java |
-| 3 | add User entity, Flyway migration, and BCrypt seed |
-| 4 | add auth routes and Spring Security session handling |
-| 5 | generate OpenAPI spec and regenerate TS contract |
-| 6 | swap web to generated client and verify e2e |
-| 7 | update Docker, compose, CI, e2e, and scripts for Java |
-| 8 | rewrite AGENTS.md, skills, and lessons for the Java stack |
-| 9 | cut over to Java backend and remove old stack |
+| Step | Checkpoint commit                                         |
+| ---- | --------------------------------------------------------- |
+| 1    | scaffold Spring Boot + Maven backend                      |
+| 2    | implement /api/health and point proxy at Java             |
+| 3    | add User entity, Flyway migration, and BCrypt seed        |
+| 4    | add auth routes and Spring Security session handling      |
+| 5    | generate OpenAPI spec and regenerate TS contract          |
+| 6    | swap web to generated client and verify e2e               |
+| 7    | update Docker, compose, CI, e2e, and scripts for Java     |
+| 8    | rewrite AGENTS.md, skills, and lessons for the Java stack |
+| 9    | cut over to Java backend and remove old stack             |

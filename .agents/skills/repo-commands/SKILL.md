@@ -6,7 +6,7 @@ description: Running scripts in this monorepo - Docker vs host, Flyway migration
 # Repo commands
 
 The web and shared packages use scripts in the root `package.json` (run from the
-repo root). The Java API is a Maven project in `apps/api-java`.
+repo root). The Java API is a Maven project in `apps/api`.
 
 ## Docker or host?
 
@@ -25,16 +25,16 @@ Check what is running first: `docker compose ps`.
 | Task                                      | Command                                                          |
 | ----------------------------------------- | ---------------------------------------------------------------- |
 | Check the web + packages (lint, typecheck, test, build) | `pnpm check`                                       |
-| Build and test the Java API               | `mvn -q -B -f apps/api-java/pom.xml verify`                      |
-| Run the Java API                          | `mvn -q -B -f apps/api-java/pom.xml spring-boot:run`            |
+| Build and test the Java API               | `mvn -q -B -f apps/api/pom.xml verify`                      |
+| Run the Java API                          | `mvn -q -B -f apps/api/pom.xml spring-boot:run`            |
 | Format                                    | `pnpm format`                                                    |
 | One task in one TS package                | `pnpm turbo run test --filter=@erp/web`                          |
-| New migration                             | add `V<n>__<change>.sql` under `apps/api-java/src/main/resources/db/migration` (applied on next boot) |
+| New migration                             | add `V<n>__<change>.sql` under `apps/api/src/main/resources/db/migration` (applied on next boot) |
 | Regenerate the TS contract after a DTO change | save the spec, then `pnpm --filter @erp/contracts generate` (see `add-feature`) |
-| Wipe the database (drop all tables)       | `mvn -q -B -f apps/api-java/pom.xml flyway:clean` (re-migrates + seeds on next boot) |
+| Wipe the database (drop all tables)       | `mvn -q -B -f apps/api/pom.xml flyway:clean` (re-migrates + seeds on next boot) |
 | Delete containers + all volumes (db, stores) | `pnpm docker:clean`                                           |
 | Add a web/package dependency              | `pnpm add <pkg> --filter @erp/web` (run in **one** place only)   |
-| Add a Java dependency                     | edit `apps/api-java/pom.xml`                                      |
+| Add a Java dependency                     | edit `apps/api/pom.xml`                                      |
 | Browser tests (the `Demo:` lines)         | `pnpm e2e` on the **host**; see the `write-e2e` skill            |
 | Last Playwright report or a trace         | `pnpm --filter @erp/e2e exec playwright show-report`, `... show-trace <zip>` |
 

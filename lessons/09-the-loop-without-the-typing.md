@@ -120,7 +120,7 @@ Open `.kiro/agents/implementer.json` next to `reviewer.json` from lesson 8. The 
   "excludedTools": ["knowledge"],
   "resources": [
     "file://../../AGENTS.md",
-    "file://../../apps/api-java/AGENTS.md",
+    "file://../../apps/api/AGENTS.md",
     "file://../../apps/web/AGENTS.md",
     "skill://.kiro/skills/*/SKILL.md"
   ],
@@ -224,7 +224,7 @@ for n in $frontier; do
   branch="ticket/$n-$slug"                                    # from the title, as you did by hand
   # skip if the branch exists: a previous run left it, and a human decides
 
-  mvn -q -B -f apps/api-java/pom.xml flyway:clean   # section 3's fourth fact
+  mvn -q -B -f apps/api/pom.xml flyway:clean   # section 3's fourth fact
   git switch -c "$branch"
 
   kiro-cli chat --v3 --no-interactive --output-format stream-json --agent implementer \
@@ -240,7 +240,7 @@ done
 | Line                                              | Why                                                                                                                                                                                                                                                    |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Skip an existing branch                           | A branch for this ticket means a run already happened. Building again on top, or deleting it, is a decision, and the script doesn't make those                                                                                                         |
-| `mvn flyway:clean`                                | Section 3's mismatch. Flyway drops every table so the next boot re-migrates and re-seeds from `main`. The guard refuses this reset to agents; the script is run by a human                                                                              |
+| `mvn flyway:clean`                                | Section 3's mismatch. Flyway drops every table so the next boot re-migrates and re-seeds from `main`. The guard refuses this reset to agents; the script is run by a human                                                                             |
 | `--v3`, `--no-interactive`, `--agent implementer` | The engine that reads permission rules, headless mode, and the file from section 4. Same three as lesson 8's reviewer command                                                                                                                          |
 | `--trust-workspace`                               | Since 2.33 the V3 engine asks whether to trust a folder's hooks and agents the first time. Headless, that ask is a deny and the guard wouldn't load. The flag answers yes for this launch only, for a folder you are sitting in                        |
 | `/implement-unattended #$n`                       | The saved prompt, section 4. `${1}` becomes `#18`                                                                                                                                                                                                      |
@@ -287,8 +287,8 @@ Stay for the first ticket. It is lesson 7 section 4's run, printed to a terminal
 [read] .kiro/skills/implement-ticket/SKILL.md
 [execute] gh issue view 18 --json title,body
 Ticket #18: ...
-[execute] mvn -q -B -f apps/api-java/pom.xml test -Dtest=OrderControllerTest
-[edit] apps/api-java/src/test/java/com/erp/api/order/OrderControllerTest.java
+[execute] mvn -q -B -f apps/api/pom.xml test -Dtest=OrderControllerTest
+[edit] apps/api/src/test/java/com/erp/api/order/OrderControllerTest.java
 [failed] Run Command  Output: ... Exit Code: 1
 ```
 
@@ -316,7 +316,7 @@ Lesson 7 section 5, per pull request. The script did none of it, on purpose. The
 ```bash
 gh pr list                                           # three PRs, from ticket/18-..., ticket/19-..., ticket/20-...
 git switch ticket/18-<slug>
-mvn -q -B -f apps/api-java/pom.xml flyway:clean   # your database matches the last ticket, not this one
+mvn -q -B -f apps/api/pom.xml flyway:clean   # your database matches the last ticket, not this one
 pnpm dev                                             # if the stack from section 2 is only Postgres
 ```
 

@@ -132,14 +132,14 @@ Token counts are estimates (four characters per token). The point is the shape, 
 
 ### What moved into skills
 
-| Was in               | Content                                                                      | Now in          |
-| -------------------- | ---------------------------------------------------------------------------- | --------------- |
-| root `AGENTS.md`     | the six-step "add a feature" workflow                                        | `add-feature`   |
-| root `AGENTS.md`     | Flyway migration/seed/reset notes, Docker, `--filter`, Maven gotchas         | `repo-commands` |
-| root `AGENTS.md`     | env var registration steps (`.env.example`)                                  | `repo-commands` |
-| `apps/api-java/AGENTS.md` | the Tests section (`@SpringBootTest`, `MockMvc`)                        | `write-tests`   |
-| `apps/web/AGENTS.md` | the Tests section (`QueryClientProvider`, `vi.stubGlobal`)                   | `write-tests`   |
-| `apps/web/AGENTS.md` | how to add a shadcn/ui component                                             | `add-feature`   |
+| Was in               | Content                                                              | Now in          |
+| -------------------- | -------------------------------------------------------------------- | --------------- |
+| root `AGENTS.md`     | the six-step "add a feature" workflow                                | `add-feature`   |
+| root `AGENTS.md`     | Flyway migration/seed/reset notes, Docker, `--filter`, Maven gotchas | `repo-commands` |
+| root `AGENTS.md`     | env var registration steps (`.env.example`)                          | `repo-commands` |
+| `apps/api/AGENTS.md` | the Tests section (`@SpringBootTest`, `MockMvc`)                     | `write-tests`   |
+| `apps/web/AGENTS.md` | the Tests section (`QueryClientProvider`, `vi.stubGlobal`)           | `write-tests`   |
+| `apps/web/AGENTS.md` | how to add a shadcn/ui component                                     | `add-feature`   |
 
 Each of these got _longer_ in its new home. The test section used to be four bullets pointing at an example file. The skill now contains a complete, copyable spec and component test, because the agent only reads it when it is writing tests.
 
@@ -155,7 +155,7 @@ Each of these got _longer_ in its new home. The test section used to be four bul
 Everything left in the three files passes the first question: the agent would do the wrong thing on an ordinary task without it.
 
 - `AGENTS.md`: the package map, contract-first (Java owns it), import rules, where env vars live, "run `pnpm check` and `mvn verify` before finishing", and a list of the skills with one line each on when to use them.
-- `apps/api-java/AGENTS.md`: one package per feature, `@RestController` under `/api`, DTOs as records, JPA repositories only, Spring Security for auth.
+- `apps/api/AGENTS.md`: one package per feature, `@RestController` under `/api`, DTOs as records, JPA repositories only, Spring Security for auth.
 - `apps/web/AGENTS.md` (9 lines): typed client only, same-origin `/api`, where routes and components live, Tailwind with `cn()`.
 
 Notice that the root file still ends with a **skill list**. The agent gets skill descriptions from the tool anyway, but a human reading `AGENTS.md` should also learn that the recipes exist and where they are.

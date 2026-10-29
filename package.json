@@ -10,7 +10,7 @@
     "dev": "turbo run dev",
     "docker:up": "docker compose up",
     "docker:clean": "docker compose --profile tools down -v --remove-orphans",
-    "dev:local": "docker compose up -d --wait postgres && pnpm db:deploy && pnpm db:generate && pnpm db:seed && turbo run dev",
+    "dev:local": "docker compose up -d --wait postgres && turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
@@ -19,12 +19,6 @@
     "e2e": "turbo run e2e",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "db:generate": "pnpm --filter @erp/database db:generate",
-    "db:migrate": "pnpm --filter @erp/database db:migrate",
-    "db:deploy": "pnpm --filter @erp/database db:deploy",
-    "db:reset": "pnpm --filter @erp/database db:reset",
-    "db:seed": "pnpm --filter @erp/database db:seed",
-    "db:studio": "pnpm --filter @erp/database db:studio",
     "implement:frontier": "bash scripts/implement-frontier.sh"
   },
   "devDependencies": {

@@ -31,8 +31,7 @@ export const orpc = {
       mutationOptions: (options?: {
         onSuccess?: (user: Awaited<ReturnType<typeof login>>['data']) => void;
       }) => ({
-        mutationFn: async (input: { email: string; password: string }) =>
-          (await login(input)).data,
+        mutationFn: async (input: { email: string; password: string }) => (await login(input)).data,
         onSuccess: options?.onSuccess,
       }),
     },
