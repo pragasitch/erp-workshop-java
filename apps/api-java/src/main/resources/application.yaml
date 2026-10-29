@@ -7,9 +7,9 @@ spring:
   application:
     name: erp-api
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/erp_java}
-    username: ${POSTGRES_USER:erp}
-    password: ${POSTGRES_PASSWORD:erp}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/erp_java}
+    username: ${SPRING_DATASOURCE_USERNAME:${POSTGRES_USER:erp}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${POSTGRES_PASSWORD:erp}}
   jpa:
     hibernate:
       ddl-auto: validate

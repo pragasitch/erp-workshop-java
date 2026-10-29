@@ -23,6 +23,7 @@ x-node-app: &node-app
   volumes:
     - .:/workspace
     - pnpm-store:/pnpm/store
+    - m2:/m2/repository
   environment:
     <<: *node-env
 
@@ -50,16 +51,18 @@ services:
 
   api:
     <<: *node-app
-    # Apply pending migrations, (re)create the demo users, then run NestJS + watchers for the shared packages it uses.
-    command: sh -c "pnpm db:deploy && pnpm db:seed && pnpm turbo run dev --filter=@erp/api... --ui=stream"
+    # Build the Spring Boot API, then run it. Flyway migrates and the seeder creates
+    # the demo users on startup, so no separate migrate/seed step is needed.
+    command: sh -c "mvn -q -B -f apps/api-java/pom.xml spring-boot:run"
     ports:
       - '${API_PORT:-3000}:3000'
     environment:
       <<: *node-env
       PORT: '3000'
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-erp}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-erp}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-erp}
     depends_on:
-      install:
-        condition: service_completed_successfully
       postgres:
         condition: service_healthy
 
@@ -90,3 +93,4 @@ services:
 volumes:
   postgres-data:
   pnpm-store:
+  m2:

@@ -20,7 +20,7 @@
     },
     "build": {
       "dependsOn": ["^build", "db:generate"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", "target/**"]
     },
     "dev": {
       "dependsOn": ["^build", "db:generate"],
