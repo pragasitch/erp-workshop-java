@@ -7,7 +7,7 @@
 //
 // The three tools send slightly different JSON, so this reads the command
 // from the fields it knows and falls back to the whole payload.
-/*
+
 import { readFileSync } from 'node:fs';
 
 const rules = [
@@ -104,4 +104,3 @@ if (hit) {
 }
 
 process.exit(0);
-*/

@@ -20,6 +20,26 @@ COPY --from=jdk /opt/java/openjdk /opt/java/openjdk
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
+# --- Corporate TLS interception (e.g. Zscaler) -----------------------------
+# Drop one or more root/intermediate CAs (PEM, *.crt) into docker/certs/.
+# Each is registered in the OS trust store and the JDK keystore, and exposed to
+# npm/Node/git/Maven so installs behind the proxy don't fail with
+# UNABLE_TO_GET_ISSUER_CERT_LOCALLY. The directory always exists (keep file),
+# so the build works with zero certs too.
+COPY docker/certs/ /usr/local/share/ca-certificates/
+RUN update-ca-certificates \
+  && for crt in /usr/local/share/ca-certificates/*.crt; do \
+       [ -e "$crt" ] || continue; \
+       keytool -importcert -noprompt -trustcacerts \
+         -alias "corp-$(basename "$crt" .crt)" \
+         -file "$crt" \
+         -keystore "$JAVA_HOME/lib/security/cacerts" -storepass changeit; \
+     done
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt \
+  NPM_CONFIG_CAFILE=/etc/ssl/certs/ca-certificates.crt \
+  GIT_SSL_CAINFO=/etc/ssl/certs/ca-certificates.crt \
+  SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+
 # Keep in sync with "packageManager" in the root package.json.
 RUN npm install -g pnpm@12.15.0
 
